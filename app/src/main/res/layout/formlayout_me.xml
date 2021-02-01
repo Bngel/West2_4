@@ -1,0 +1,56 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_centerInParent="true">
+
+    <RelativeLayout
+        android:layout_width="350dp"
+        android:layout_height="140dp"
+        android:background="@android:color/transparent">
+
+        <ImageView
+            android:id="@+id/me_portraitImage"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/me_portrait"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="30dp" />
+
+        <TextView
+            android:id="@+id/me_userName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/me_portraitImage"
+            android:layout_toRightOf="@id/me_portraitImage"
+            android:layout_margin="10dp"
+            android:text="@string/default_username"
+            android:textSize="18sp"
+            android:layout_toEndOf="@id/me_portraitImage" />
+
+        <TextView
+            android:id="@+id/me_userSpaceTag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/me_userName"
+            android:layout_below="@id/me_userName"
+            android:layout_alignStart="@id/me_userName"
+            android:textSize="13sp"
+            android:text="@string/string_space"/>
+
+        <TextView
+            android:id="@+id/me_userSpace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_alignTop="@id/me_userSpaceTag"
+            android:layout_toRightOf="@id/me_userSpaceTag"
+            android:layout_toEndOf="@id/me_userSpaceTag"
+            android:textSize="13sp"
+            android:text="@string/default_userspace"/>
+    </RelativeLayout>
+</LinearLayout>

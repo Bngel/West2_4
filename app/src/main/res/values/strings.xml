@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">PanWest</string>
+    <string name="default_username">默认测试用户名ID</string>
+    <string name="default_userspace">0G/1024G</string>
+    <string name="string_space">空间大小:</string>
+</resources>
