@@ -1,0 +1,91 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/my_star_img"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/my_star"/>
+
+        <TextView
+            android:id="@+id/my_star_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/string_my_star"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/my_share_img"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/my_share"/>
+
+        <TextView
+            android:id="@+id/my_share_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/string_my_share"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/my_download_img"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/my_download"/>
+
+        <TextView
+            android:id="@+id/my_download_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/string_my_download"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/my_delete_img"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/my_delete"/>
+
+        <TextView
+            android:id="@+id/my_delete_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/string_my_delete"/>
+    </LinearLayout>
+
+</LinearLayout>

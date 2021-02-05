@@ -2,11 +2,67 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#F5F6FA">
 
-    <com.example.panwest.MeFormLayout
+    <com.example.panwest.UI.Widgets.NavigationView
+        android:id="@+id/main_Navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <com.example.panwest.UI.Widgets.MeFormView
         android:id="@+id/main_Me"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorSky"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorSky"/>
+
+    <com.example.panwest.UI.Widgets.MyView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorSky"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/colorSky"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.example.panwest.UI.Widgets.spaceButtonView
+            android:id="@+id/main_spaceBtn"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"/>
+
+        <com.example.panwest.UI.Widgets.moreButtonView
+            android:id="@+id/main_moreBtn"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <com.example.panwest.UI.Widgets.settingButtonView
+            android:id="@+id/main_settingBtn"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+    </LinearLayout>
 </LinearLayout>

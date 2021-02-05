@@ -1,6 +1,17 @@
 <resources>
     <string name="app_name">PanWest</string>
     <string name="default_username">默认测试用户名ID</string>
-    <string name="default_userspace">0G/1024G</string>
-    <string name="string_space">空间大小:</string>
+    <string name="default_userspace">1024G</string>
+    <string name="default_spaceaddress">packageA\\packageB\\packageC\\packageD</string>
+    <string name="default_appname">PanWest</string>
+    <string name="default_spacesize">0G/1024G</string>
+    <string name="default_setting">设置</string>
+    <string name="default_more">更多</string>
+    <string name="default_my_space">我的网盘</string>
+    <string name="string_space">空间上限:</string>
+    <string name="string_address">当前位置:</string>
+    <string name="string_my_star">我的收藏</string>
+    <string name="string_my_share">我的分享</string>
+    <string name="string_my_download">我的下载</string>
+    <string name="string_my_delete">回收站</string>
 </resources>
