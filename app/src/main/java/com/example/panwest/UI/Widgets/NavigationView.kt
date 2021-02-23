@@ -12,6 +12,8 @@ class NavigationView(context: Context, attrs: AttributeSet) : LinearLayout(conte
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_navigation_main,this)
+        val array = context.obtainStyledAttributes(attrs, R.styleable.NavigationView)
+        nv_appName.text = array.getString(R.styleable.NavigationView_text)
         setFonts()
     }
 

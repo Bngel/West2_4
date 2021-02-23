@@ -10,7 +10,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -19,13 +18,17 @@ import butterknife.ButterKnife
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.view_meform_main.*
+import kotlinx.android.synthetic.main.view_morebtn_main.*
+import kotlinx.android.synthetic.main.view_settingbtn_main.*
 import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
 
     private val LOGIN_STATE = "login_state"
-    private val LOGIN_ACTIVITY = 1
+    private val LOGIN_ACTIVITY = 0x01
+    private val MORE_ACTIVITY = 0X02
+    private val SETTING_ACTIVITY = 0X03
     private val REQUEST_CODE_GALLERY = 0x10 // 图库选取图片标识请求码
     private val CROP_PHOTO = 0x12 // 裁剪图片标识请求码
     private val STORAGE_PERMISSION = 0x20 // 动态申请存储权限标识
@@ -61,11 +64,20 @@ class MainActivity : AppCompatActivity() {
             login(userAccount.first ?: "", userAccount.second ?: "")
         }
         else {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivityForResult(intent, LOGIN_ACTIVITY)
+            val loginIntent = Intent(this, LoginActivity::class.java)
+            startActivityForResult(loginIntent, LOGIN_ACTIVITY)
         }
+
         me_portraitImage.setOnClickListener {
             gallery()
+        }
+        moreBtn.setOnClickListener {
+            val moreIntent = Intent(this, MoreActivity::class.java)
+            startActivityForResult(moreIntent, MORE_ACTIVITY)
+        }
+        settingBtn.setOnClickListener {
+            val settingIntent = Intent(this, SettingActivity::class.java)
+            startActivityForResult(settingIntent, SETTING_ACTIVITY)
         }
     }
 
@@ -179,7 +191,7 @@ class MainActivity : AppCompatActivity() {
                 getExternalFilesDir(null),
                 System.currentTimeMillis().toString() + "galleryDemo.jpg"
             )
-        } catch (e: java.lang.Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
@@ -194,11 +206,11 @@ class MainActivity : AppCompatActivity() {
             Glide.with(this)
                 .load(imageUri)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .placeholder(R.mipmap.ic_launcher_round) // 占位图设置：加载过程中显示的图片
-                .error(R.drawable.srh) // 异常占位图
+                .placeholder(R.drawable.me_loading) // 占位图设置：加载过程中显示的图片
+                .error(R.drawable.me_error) // 异常占位图
                 .centerCrop()
                 .into(me_portraitImage)
-        } catch (e: java.lang.Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
