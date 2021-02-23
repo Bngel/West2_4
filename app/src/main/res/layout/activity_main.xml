@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         app:text="PanWest"/>
 
-    <com.example.panwest.UI.Widgets.MeFormView
+    <com.example.panwest.UI.Combination.MeFormView
         android:id="@+id/main_Me"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
@@ -28,7 +28,7 @@
         android:layout_marginTop="5dp"
         android:background="@color/colorSky"/>
 
-    <com.example.panwest.UI.Widgets.MyView
+    <com.example.panwest.UI.Combination.MyView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
@@ -49,20 +49,23 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.example.panwest.UI.Widgets.spaceButtonView
+        <com.example.panwest.UI.Widgets.homeButtonView
             android:id="@+id/main_spaceBtn"
+            app:btn_text="@string/default_my_space"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="2"/>
 
-        <com.example.panwest.UI.Widgets.moreButtonView
+        <com.example.panwest.UI.Widgets.homeButtonView
             android:id="@+id/main_moreBtn"
+            app:btn_text="@string/default_more"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-        <com.example.panwest.UI.Widgets.settingButtonView
+        <com.example.panwest.UI.Widgets.homeButtonView
             android:id="@+id/main_settingBtn"
+            app:btn_text="@string/default_setting"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"/>

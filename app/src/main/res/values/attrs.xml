@@ -3,4 +3,7 @@
     <declare-styleable name="NavigationView">
         <attr name="text" format="string"/>
     </declare-styleable>
+    <declare-styleable name="HomeBtnView">
+        <attr name="btn_text" format="string"/>
+    </declare-styleable>
 </resources>

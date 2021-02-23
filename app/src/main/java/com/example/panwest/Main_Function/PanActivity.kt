@@ -1,4 +1,4 @@
-package com.example.panwest.UI.Widgets
+package com.example.panwest.Main_Function
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

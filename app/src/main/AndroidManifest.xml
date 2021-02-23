@@ -16,13 +16,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SettingActivity"></activity>
-        <activity android:name=".MoreActivity" />
-        <activity
-            android:name=".ui.login.MoreActivity"
-            android:label="@string/title_activity_more" />
-        <activity android:name=".UI.Widgets.PanActivity" />
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".Login_Function.RegisterActivity"></activity>
+        <activity android:name=".Main_Function.SettingActivity" />
+        <activity android:name=".Main_Function.MoreActivity" />
+        <activity android:name=".Main_Function.PanActivity" />
+        <activity android:name=".Login_Function.LoginActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

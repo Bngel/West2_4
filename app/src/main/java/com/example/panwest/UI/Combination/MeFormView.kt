@@ -1,4 +1,4 @@
-package com.example.panwest.UI.Widgets
+package com.example.panwest.UI.Combination
 
 import android.content.Context
 import android.util.AttributeSet

@@ -17,9 +17,11 @@ import androidx.core.content.ContextCompat
 import butterknife.ButterKnife
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.example.panwest.Login_Function.LoginActivity
+import com.example.panwest.Main_Function.MoreActivity
+import com.example.panwest.Main_Function.SettingActivity
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_meform_main.*
-import kotlinx.android.synthetic.main.view_morebtn_main.*
-import kotlinx.android.synthetic.main.view_settingbtn_main.*
 import java.io.File
 
 
@@ -71,11 +73,11 @@ class MainActivity : AppCompatActivity() {
         me_portraitImage.setOnClickListener {
             gallery()
         }
-        moreBtn.setOnClickListener {
+        main_moreBtn.setOnClickListener {
             val moreIntent = Intent(this, MoreActivity::class.java)
             startActivityForResult(moreIntent, MORE_ACTIVITY)
         }
-        settingBtn.setOnClickListener {
+        main_settingBtn.setOnClickListener {
             val settingIntent = Intent(this, SettingActivity::class.java)
             startActivityForResult(settingIntent, SETTING_ACTIVITY)
         }
