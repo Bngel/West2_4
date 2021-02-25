@@ -1,3 +1,13 @@
 package com.example.panwest.data
 
-data class LoginJson(val status: Boolean, val user: User)
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
+
+data class LoginJson(
+    @Expose
+    @SerializedName("loginStatus")
+    val status: Boolean,
+    @Expose
+    @SerializedName("userInformation")
+    val user: User
+    )

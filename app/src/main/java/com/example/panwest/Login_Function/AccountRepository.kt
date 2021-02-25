@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.panwest.WebService_Function.WebService
 import com.example.panwest.data.LoginJson
 import com.example.panwest.data.User
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

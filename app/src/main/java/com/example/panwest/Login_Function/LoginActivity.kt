@@ -23,8 +23,6 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-
-
         login_pan_register.setOnClickListener {
             val registerIntent = Intent(this, RegisterActivity::class.java)
             startActivityForResult(registerIntent, REGISTER_ACTIVITY)

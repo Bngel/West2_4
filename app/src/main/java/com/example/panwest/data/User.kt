@@ -1,3 +1,16 @@
 package com.example.panwest.data
 
-data class User(val username: String, val password: String, val email: String)
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
+
+data class User(
+    @Expose
+    @SerializedName("username")
+    val username: String,
+    @Expose
+    @SerializedName("password")
+    val password: String,
+    @Expose
+    @SerializedName("email")
+    val email: String
+    )

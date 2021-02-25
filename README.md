@@ -7,3 +7,7 @@
 
 ## 自定义View时自定义使用的属性
 - https://www.jianshu.com/p/8844de6addb3
+
+## Retrofit 使用参考
+- https://stackoverflow.com/questions/47997594/expected-a-string-but-was-begin-array-gson
+- http://www.kotlincodes.com/kotlin/retrofit-with-kotlin/

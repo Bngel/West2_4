@@ -2,18 +2,16 @@ package com.example.panwest.WebService_Function
 
 import com.example.panwest.data.LoginJson
 import com.example.panwest.data.User
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
-import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface WebService {
 
-    @POST("login")
+    @POST("User/login")
     fun userLogin(@Body user: User): Call<LoginJson>
 
     companion object Factory {
@@ -21,7 +19,6 @@ interface WebService {
             val gson = GsonBuilder()
                 .setLenient()
                 .create()
-
             val retrofit: Retrofit =  Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create(gson))
@@ -30,4 +27,6 @@ interface WebService {
             return accountService
         }
     }
+
+
 }
