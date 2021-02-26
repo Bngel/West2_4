@@ -7,7 +7,7 @@
     android:background="#F5F6FA">
 
     <com.example.panwest.UI.Widgets.NavigationView
-        android:id="@+id/main_Navigation"
+        android:id="@+id/more_Navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:text="@string/default_more"/>

@@ -1,7 +1,7 @@
 package com.example.panwest.WebService_Function
 
-import com.example.panwest.data.LoginJson
-import com.example.panwest.data.User
+import com.example.panwest.Data.LoginJson
+import com.example.panwest.Data.User
 import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Retrofit

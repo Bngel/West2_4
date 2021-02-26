@@ -19,9 +19,15 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.panwest.Login_Function.LoginActivity
 import com.example.panwest.Main_Function.MoreActivity
+import com.example.panwest.Main_Function.PanActivity
 import com.example.panwest.Main_Function.SettingActivity
+import com.example.panwest.My_Function.DeleteActivity
+import com.example.panwest.My_Function.DownloadActivity
+import com.example.panwest.My_Function.ShareActivity
+import com.example.panwest.My_Function.StarActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_meform_main.*
+import kotlinx.android.synthetic.main.view_my_main.*
 import java.io.File
 
 
@@ -31,6 +37,11 @@ class MainActivity : AppCompatActivity() {
     private val LOGIN_ACTIVITY = 0x01
     private val MORE_ACTIVITY = 0X02
     private val SETTING_ACTIVITY = 0X03
+    private val SPACE_ACTIVITY = 0X04
+    private val STAR_ACTIVITY = 0X05
+    private val SHARE_ACTIVITY = 0X06
+    private val DOWNLOAD_ACTIVITY = 0X07
+    private val DELETE_ACTIVITY = 0X08
     private val REQUEST_CODE_GALLERY = 0x10 // 图库选取图片标识请求码
     private val CROP_PHOTO = 0x12 // 裁剪图片标识请求码
     private val STORAGE_PERMISSION = 0x20 // 动态申请存储权限标识
@@ -70,6 +81,9 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(loginIntent, LOGIN_ACTIVITY)
         }
 
+        setClickEvent()
+    }
+    private fun setClickEvent() {
         me_portraitImage.setOnClickListener {
             gallery()
         }
@@ -81,8 +95,27 @@ class MainActivity : AppCompatActivity() {
             val settingIntent = Intent(this, SettingActivity::class.java)
             startActivityForResult(settingIntent, SETTING_ACTIVITY)
         }
+        main_spaceBtn.setOnClickListener {
+            val spaceIntent = Intent(this, PanActivity::class.java)
+            startActivityForResult(spaceIntent, SPACE_ACTIVITY)
+        }
+        my_star_img.setOnClickListener {
+            val starIntent = Intent(this, StarActivity::class.java)
+            startActivityForResult(starIntent, STAR_ACTIVITY)
+        }
+        my_share_img.setOnClickListener {
+            val shareIntent = Intent(this, ShareActivity::class.java)
+            startActivityForResult(shareIntent, SHARE_ACTIVITY)
+        }
+        my_download_img.setOnClickListener {
+            val downloadIntent = Intent(this, DownloadActivity::class.java)
+            startActivityForResult(downloadIntent, DOWNLOAD_ACTIVITY)
+        }
+        my_delete_img.setOnClickListener {
+            val deleteIntent = Intent(this, DeleteActivity::class.java)
+            startActivityForResult(deleteIntent, DELETE_ACTIVITY)
+        }
     }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {

@@ -1,14 +1,14 @@
-package com.example.panwest.Main_Function
+package com.example.panwest.My_Function
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.panwest.Adapter.SpaceAdapter
-import com.example.panwest.R
 import com.example.panwest.Data.PanFile
-import kotlinx.android.synthetic.main.activity_pan.*
+import com.example.panwest.R
+import kotlinx.android.synthetic.main.activity_download.*
 
-class PanActivity : AppCompatActivity() {
+class DownloadActivity : AppCompatActivity() {
 
     val test_infos = listOf(
         PanFile("PHOTO", R.drawable.type_photo, "img1.png", "testUrl"),
@@ -25,10 +25,9 @@ class PanActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_pan)
-
+        setContentView(R.layout.activity_download)
         val adapter = SpaceAdapter(test_infos)
-        space_fileList.adapter = adapter
-        space_fileList.layoutManager = LinearLayoutManager(this)
+        download_fileList.adapter = adapter
+        download_fileList.layoutManager = LinearLayoutManager(this)
     }
 }

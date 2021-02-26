@@ -2,8 +2,8 @@ package com.example.panwest.Login_Function
 
 import android.util.Log
 import com.example.panwest.WebService_Function.WebService
-import com.example.panwest.data.LoginJson
-import com.example.panwest.data.User
+import com.example.panwest.Data.LoginJson
+import com.example.panwest.Data.User
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
