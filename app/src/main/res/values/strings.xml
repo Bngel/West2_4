@@ -23,4 +23,6 @@
     <string name="string_input_id">请输入云盘账号</string>
     <string name="string_input_pswd">请输入云盘密码</string>
     <string name="string_input_pswd_again">请再次输入云盘密码</string>
+    <string name="string_setting_infomation">账号设置</string>
+    <string name="string_setting_reply">问题反馈</string>
 </resources>

@@ -80,9 +80,9 @@ class MainActivity : AppCompatActivity() {
             val loginIntent = Intent(this, LoginActivity::class.java)
             startActivityForResult(loginIntent, LOGIN_ACTIVITY)
         }
-
         setClickEvent()
     }
+
     private fun setClickEvent() {
         me_portraitImage.setOnClickListener {
             gallery()
