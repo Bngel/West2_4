@@ -28,4 +28,9 @@
     <string name="string_setting_reply_edit_hint">请输入需要反馈的问题:</string>
     <string name="string_setting_account_switch">账号切换</string>
     <string name="string_setting_account_logout">账号登出</string>
+    <string name="string_photo">图片</string>
+    <string name="string_movie">视频</string>
+    <string name="string_music">音频</string>
+    <string name="string_rar">压缩包</string>
+    <string name="string_file">文件</string>
 </resources>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="170dp"
+        android:layout_height="1dp"
+        android:background="@android:color/transparent"/>
+
+    <Button
+        android:id="@+id/filtrate_popbutton_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/string_file"
+        android:textColor="@android:color/black"
+        android:drawableLeft="@drawable/type_file_small"
+        android:padding="15dp"
+        android:background="@android:color/transparent"/>
+    <ImageView
+        android:layout_width="130dp"
+        android:layout_height="1dp"
+        android:background="@color/colorSky"
+        android:layout_gravity="right"/>
+
+    <Button
+        android:id="@+id/filtrate_popbutton_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/string_photo"
+        android:textColor="@android:color/black"
+        android:drawableLeft="@drawable/type_photo_small"
+        android:padding="15dp"
+        android:background="@android:color/transparent"/>
+    <ImageView
+        android:layout_width="130dp"
+        android:layout_height="1dp"
+        android:background="@color/colorSky"
+        android:layout_gravity="right"/>
+
+    <Button
+        android:id="@+id/filtrate_popbutton_movie"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/string_movie"
+        android:textColor="@android:color/black"
+        android:drawableLeft="@drawable/type_movie_small"
+        android:padding="15dp"
+        android:background="@android:color/transparent"/>
+    <ImageView
+        android:layout_width="130dp"
+        android:layout_height="1dp"
+        android:background="@color/colorSky"
+        android:layout_gravity="right"/>
+
+    <Button
+        android:id="@+id/filtrate_popbutton_music"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/string_music"
+        android:textColor="@android:color/black"
+        android:drawableLeft="@drawable/type_music_small"
+        android:padding="15dp"
+        android:background="@android:color/transparent"/>
+    <ImageView
+        android:layout_width="130dp"
+        android:layout_height="1dp"
+        android:background="@color/colorSky"
+        android:layout_gravity="right"/>
+
+    <Button
+        android:id="@+id/filtrate_popbutton_rar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/string_rar"
+        android:textColor="@android:color/black"
+        android:drawableLeft="@drawable/type_rar_small"
+        android:padding="15dp"
+        android:background="@android:color/transparent"/>
+    <ImageView
+        android:layout_width="130dp"
+        android:layout_height="1dp"
+        android:background="@color/colorSky"
+        android:layout_gravity="right"/>
+</LinearLayout>
