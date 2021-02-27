@@ -25,4 +25,7 @@
     <string name="string_input_pswd_again">请再次输入云盘密码</string>
     <string name="string_setting_infomation">账号设置</string>
     <string name="string_setting_reply">问题反馈</string>
+    <string name="string_setting_reply_edit_hint">请输入需要反馈的问题:</string>
+    <string name="string_setting_account_switch">账号切换</string>
+    <string name="string_setting_account_logout">账号登出</string>
 </resources>

@@ -3,10 +3,11 @@ package com.example.panwest.Login_Function
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.panwest.BaseActivity
 import com.example.panwest.R
 import kotlinx.android.synthetic.main.activity_login.*
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity() {
     private val REGISTER_ACTIVITY = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {

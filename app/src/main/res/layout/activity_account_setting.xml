@@ -24,6 +24,77 @@
         android:layout_marginBottom="5dp"
         android:background="@color/colorSky"/>
 
+    <RelativeLayout
+        android:id="@+id/account_setting_item_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="@android:color/transparent"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:text="@string/string_setting_account_switch"
+            android:textSize="18sp"
+            android:clickable="false"/>
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/setting_next"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:clickable="false"/>
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorSky"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"/>
+
+    <RelativeLayout
+        android:id="@+id/account_setting_item_logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="@android:color/transparent"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:text="@string/string_setting_account_logout"
+            android:textSize="18sp"
+            android:clickable="false"/>
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/setting_next"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:clickable="false"/>
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorSky"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"/>
 </LinearLayout>
 
 

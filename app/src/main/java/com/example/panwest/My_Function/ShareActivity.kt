@@ -4,11 +4,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.panwest.Adapter.SpaceAdapter
+import com.example.panwest.BaseActivity
 import com.example.panwest.Data.PanFile
 import com.example.panwest.R
 import kotlinx.android.synthetic.main.activity_share.*
 
-class ShareActivity : AppCompatActivity() {
+class ShareActivity : BaseActivity() {
     val test_infos = listOf(
         PanFile("PHOTO", R.drawable.type_photo, "img1.png", "testUrl"),
         PanFile("PHOTO", R.drawable.type_photo, "img2.png", "testUrl"),

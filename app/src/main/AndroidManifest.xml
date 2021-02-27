@@ -19,7 +19,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="n">
-        <activity android:name=".Main_Function.Setting_Function.ReplySettingActivity"></activity>
+        <activity android:name=".BaseActivity"></activity>
+        <activity android:name=".Main_Function.Setting_Function.ReplySettingActivity" />
         <activity android:name=".Main_Function.Setting_Function.AccountSettingActivity" />
         <activity android:name=".My_Function.DeleteActivity" />
         <activity android:name=".My_Function.DownloadActivity" />

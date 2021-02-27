@@ -3,12 +3,13 @@ package com.example.panwest.Main_Function
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.panwest.BaseActivity
 import com.example.panwest.Main_Function.Setting_Function.AccountSettingActivity
 import com.example.panwest.Main_Function.Setting_Function.ReplySettingActivity
 import com.example.panwest.R
 import kotlinx.android.synthetic.main.activity_setting.*
 
-class SettingActivity : AppCompatActivity() {
+class SettingActivity : BaseActivity() {
     private val ACCOUNT_ACTIVITY = 0X01
     private val REPLY_ACTIVITY = 0X02
 

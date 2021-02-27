@@ -31,7 +31,7 @@ import kotlinx.android.synthetic.main.view_my_main.*
 import java.io.File
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private val LOGIN_STATE = "login_state"
     private val LOGIN_ACTIVITY = 0x01
@@ -49,19 +49,6 @@ class MainActivity : AppCompatActivity() {
     private var imageUri: Uri? = null // 裁剪后的图片uri
     private val path = ""
 
-
-    private fun getLoginState(): Pair<Boolean, Pair<String?, String?>> {
-        val userInfo = getSharedPreferences(LOGIN_STATE, Context.MODE_PRIVATE)
-        val userState = userInfo.getBoolean("STATE", false)
-        val userID = userInfo.getString("ID", "")
-        val userPswd = userInfo.getString("PSWD", "")
-        val user = Pair(userID, userPswd)
-        return Pair(userState, user)
-    }
-
-    private fun login(id: String, pswd: String) {
-        TODO("default user's info to login")
-    }
 
     @SuppressLint("CommitPrefEdits")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,6 +68,19 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(loginIntent, LOGIN_ACTIVITY)
         }
         setClickEvent()
+    }
+
+    private fun getLoginState(): Pair<Boolean, Pair<String?, String?>> {
+        val userInfo = getSharedPreferences(LOGIN_STATE, Context.MODE_PRIVATE)
+        val userState = userInfo.getBoolean("STATE", false)
+        val userID = userInfo.getString("ID", "")
+        val userPswd = userInfo.getString("PSWD", "")
+        val user = Pair(userID, userPswd)
+        return Pair(userState, user)
+    }
+
+    private fun login(id: String, pswd: String) {
+        TODO("default user's info to login")
     }
 
     private fun setClickEvent() {
@@ -116,6 +116,7 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(deleteIntent, DELETE_ACTIVITY)
         }
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
