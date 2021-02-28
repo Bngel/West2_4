@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import butterknife.ButterKnife
@@ -121,9 +122,9 @@ class MainActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             LOGIN_ACTIVITY -> if (resultCode == Activity.RESULT_CANCELED) {
-                //finish()
+                finish()
             } else {
-                TODO("login successfully")
+
             }
             REQUEST_CODE_GALLERY -> if (resultCode == RESULT_OK) {
                 val uri: Uri = data!!.data!! // 获取图片的uri

@@ -11,7 +11,6 @@ import com.example.panwest.BaseActivity
 import com.example.panwest.R
 import com.example.panwest.Data.PanFile
 import kotlinx.android.synthetic.main.activity_pan.*
-import kotlinx.android.synthetic.main.item_pop_filtrate.*
 
 class PanActivity : BaseActivity() {
     private val MUSIC_STRING = "MUSIC"
