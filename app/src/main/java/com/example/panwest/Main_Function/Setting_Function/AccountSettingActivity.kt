@@ -13,6 +13,7 @@ import com.example.panwest.ActivityCollector.finishAll
 import com.example.panwest.ActivityCollector.onlyActivity
 import com.example.panwest.BaseActivity
 import com.example.panwest.Login_Function.LoginActivity
+import com.example.panwest.MainActivity
 import com.example.panwest.R
 import kotlinx.android.synthetic.main.activity_account_setting.*
 
@@ -42,6 +43,7 @@ class AccountSettingActivity : BaseActivity() {
                 putBoolean("STATE", false)
                 putString("ID", "")
                 putString("PSWD", "")
+                apply()
             }
             val loginIntent = Intent(this, LoginActivity::class.java)
             startActivityForResult(loginIntent, LOGOUT_ACTIVITY)
@@ -54,7 +56,9 @@ class AccountSettingActivity : BaseActivity() {
             SWITCH_ACTIVITY -> if (resultCode == Activity.RESULT_CANCELED) {
                 //finish()
             } else {
-                TODO("login successfully")
+                val mainIntent = Intent(this, MainActivity::class.java)
+                mainIntent.putExtra("switch_success", true)
+                startActivity(mainIntent)
             }
             LOGOUT_ACTIVITY -> if (resultCode == Activity.RESULT_CANCELED) {
                 finish()

@@ -8,37 +8,32 @@ import com.example.panwest.Data.User
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.concurrent.thread
 
 object AccountRepository {
     private val accountService = WebService.create()
 
-    fun accountLogin(account: String, pswd: String){
+    fun accountLogin(account: String, pswd: String): LoginJson? {
         val user = User(account, pswd, "")
         val login = accountService.userLogin(user.username, user.password)
-        login.enqueue(object : Callback<LoginJson> {
-            override fun onResponse(call: Call<LoginJson>?, response: Response<LoginJson>?) {
-                val loginJson = response!!.body()!!
-                Log.d("TEXT_TTT", loginJson.toString())
-            }
-
-            override fun onFailure(call: Call<LoginJson>?, t: Throwable?) {
-                Log.d("TEXT_TTT", t.toString())
-            }
-        })
+        var res : LoginJson? = null
+        thread {
+            val body = login.execute().body()
+            Log.d("TEXT_TTT", body.toString())
+            res = body
+        }.join()
+        return res
     }
 
-    fun accountRegister(account: String, pswd: String, email: String) {
+    fun accountRegister(account: String, pswd: String, email: String): RegisterJson? {
         val user = User(account, pswd, email)
         val login = accountService.userRegister(user.username, user.password, user.email)
-        login.enqueue(object : Callback<RegisterJson> {
-            override fun onResponse(call: Call<RegisterJson>?, response: Response<RegisterJson>?) {
-                val registerJson = response!!.body()!!
-                Log.d("TEXT_TTT", registerJson.toString())
-            }
-
-            override fun onFailure(call: Call<RegisterJson>?, t: Throwable?) {
-                Log.d("TEXT_TTT", t.toString())
-            }
-        })
+        var res: RegisterJson? = null
+        thread {
+            val body = login.execute().body()
+            Log.d("TEXT_TTT", body.toString())
+            res = body
+        }.join()
+        return res
     }
 }

@@ -18,6 +18,8 @@ import androidx.core.content.ContextCompat
 import butterknife.ButterKnife
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.example.panwest.Data.User
+import com.example.panwest.Login_Function.AccountRepository
 import com.example.panwest.Login_Function.LoginActivity
 import com.example.panwest.Main_Function.MoreActivity
 import com.example.panwest.Main_Function.PanActivity
@@ -58,17 +60,10 @@ class MainActivity : BaseActivity() {
         ButterKnife.bind(this);// 控件绑定
         // 动态申请存储权限，后面读取文件有用
         requestStoragePermission();
-        val user = getLoginState()
-        val userState = user.first
-        val userAccount = user.second
-        if (userState) {
-            login(userAccount.first ?: "", userAccount.second ?: "")
-        }
-        else {
-            val loginIntent = Intent(this, LoginActivity::class.java)
-            startActivityForResult(loginIntent, LOGIN_ACTIVITY)
-        }
         setClickEvent()
+        if(intent.getBooleanExtra("switch_success", false))
+            ActivityCollector.onlyActivity(this)
+        defaultLogin()
     }
 
     private fun getLoginState(): Pair<Boolean, Pair<String?, String?>> {
@@ -80,8 +75,33 @@ class MainActivity : BaseActivity() {
         return Pair(userState, user)
     }
 
-    private fun login(id: String, pswd: String) {
-        TODO("default user's info to login")
+    private fun defaultLogin() {
+        val user = getLoginState()
+        val userState = user.first
+        val userAccount = user.second
+        Log.d("TEXT_TTT", userState.toString())
+        if (userState) {
+            val userName = userAccount.first!!
+            val userPassword = userAccount.second!!
+            if (userPassword != "" && userName != "") {
+                val loginStatus = AccountRepository.accountLogin(userName, userPassword)
+                if (loginStatus != null && loginStatus.status) {
+                    defaultLoad(loginStatus.user)
+                }
+                else {
+                    val loginIntent = Intent(this, LoginActivity::class.java)
+                    startActivityForResult(loginIntent, LOGIN_ACTIVITY)
+                }
+            }
+        }
+        else {
+            val loginIntent = Intent(this, LoginActivity::class.java)
+            startActivityForResult(loginIntent, LOGIN_ACTIVITY)
+        }
+    }
+
+    private fun defaultLoad(user: User) {
+        me_userName.text = user.username
     }
 
     private fun setClickEvent() {
@@ -124,7 +144,7 @@ class MainActivity : BaseActivity() {
             LOGIN_ACTIVITY -> if (resultCode == Activity.RESULT_CANCELED) {
                 finish()
             } else {
-
+                defaultLogin()
             }
             REQUEST_CODE_GALLERY -> if (resultCode == RESULT_OK) {
                 val uri: Uri = data!!.data!! // 获取图片的uri

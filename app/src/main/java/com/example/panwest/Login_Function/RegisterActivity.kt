@@ -16,6 +16,9 @@ class RegisterActivity : BaseActivity() {
     private val PSWD_CHECK = "两次密码输入不一致, 请重新输入"
     private val LOGIN_STATE = "login_state"
     private val REGISTER_ACTIVITY = 1
+    private val REGISTER_FAIL_RESULT = "用户名已存在, 请重新输入"
+    private val REGISTER_SUCCESS_RESULT = "注册成功"
+    private val REGISTER_ERROREMAIL_RESULT = "邮箱格式有误"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,16 +34,26 @@ class RegisterActivity : BaseActivity() {
             val userAccount = register_pan_id.text.toString()
             val userPassword = register_pan_pswd.text.toString()
             val userPswdCheck = register_pan_pswd_again.text.toString()
-            if (userPassword == userPswdCheck) {
-                AccountRepository.accountRegister(userAccount, userPassword, userEmail)
-                val registerIntent = Intent(this, LoginActivity::class.java)
-                registerIntent.putExtra("userAccount", userAccount)
-                registerIntent.putExtra("userPassword", userPassword)
-                setResult(RESULT_OK, registerIntent)
-                finish()
+            val regex = "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$".toRegex()
+            if (!regex.matches(userEmail)) {
+                Toast.makeText(this, REGISTER_ERROREMAIL_RESULT, Toast.LENGTH_SHORT).show()
+            }
+            else if (userPassword != userPswdCheck) {
+                Toast.makeText(this, PSWD_CHECK, Toast.LENGTH_SHORT).show()
             }
             else {
-                Toast.makeText(this, PSWD_CHECK, Toast.LENGTH_SHORT).show()
+                val registerStatus = AccountRepository.accountRegister(userAccount, userPassword, userEmail)
+                if (registerStatus != null && registerStatus.status) {
+                    val registerIntent = Intent(this, LoginActivity::class.java)
+                    registerIntent.putExtra("userAccount", userAccount)
+                    registerIntent.putExtra("userPassword", userPassword)
+                    setResult(RESULT_OK, registerIntent)
+                    finish()
+                    Toast.makeText(this, REGISTER_SUCCESS_RESULT, Toast.LENGTH_SHORT).show()
+                }
+                else {
+                    Toast.makeText(this, REGISTER_FAIL_RESULT, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
