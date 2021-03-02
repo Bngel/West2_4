@@ -9,6 +9,7 @@ object PanRepository {
     val selectedCount = MutableLiveData(0)
 
     val selectedItem = ArrayList<PanFile>()
+
     fun selectedItemAdd(panFile: PanFile) {
         selectedItem.add(panFile)
         selectedCount.value = selectedItem.size

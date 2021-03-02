@@ -14,3 +14,7 @@
 
 ## 关于文件File
 - https://www.coder.work/article/6288575
+
+## RecyclerView 多选
+- https://blog.csdn.net/guohaosir/article/details/72403724
+- https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView.Adapter#onBindViewHolder(VH,%20int,%20java.util.List%3Cjava.lang.Object%3E)

@@ -30,6 +30,7 @@ class PanActivity : BaseActivity() {
     private val EDIT_CLOSE = false
 
     private var adapter :SpaceAdapter?  = null
+    private val displayItem = ArrayList<PanFile>()
 
     val test_infos = listOf(
         PanFile("PHOTO", R.drawable.type_photo, "img1.png", "testUrl"),
@@ -79,36 +80,66 @@ class PanActivity : BaseActivity() {
 
             popbtn_photo.setOnClickListener {
                 popupWindow.dismiss()
-                adapter = SpaceAdapter(test_infos.filter { file ->
+                displayItem.clear()
+                PanRepository.selectedItem.clear()
+                PanRepository.selectedCount.value = 0
+                displayItem.addAll(test_infos.filter { file ->
                     file.Type == PHOTO_STRING
                 })
+                adapter = SpaceAdapter(displayItem)
                 space_fileList.adapter = adapter
+                editStatus = EDIT_CLOSE
+                space_bottom_edit.visibility = View.GONE
             }
             popbtn_movie.setOnClickListener {
                 popupWindow.dismiss()
-                adapter = SpaceAdapter(test_infos.filter { file ->
+                displayItem.clear()
+                PanRepository.selectedItem.clear()
+                PanRepository.selectedCount.value = 0
+                displayItem.addAll(test_infos.filter { file ->
                     file.Type == MOVIE_STRING
                 })
+                adapter = SpaceAdapter(displayItem)
                 space_fileList.adapter = adapter
+                editStatus = EDIT_CLOSE
+                space_bottom_edit.visibility = View.GONE
+
             }
             popbtn_music.setOnClickListener {
                 popupWindow.dismiss()
-                adapter = SpaceAdapter(test_infos.filter { file ->
+                displayItem.clear()
+                PanRepository.selectedItem.clear()
+                PanRepository.selectedCount.value = 0
+                displayItem.addAll(test_infos.filter { file ->
                     file.Type == MUSIC_STRING
                 })
+                adapter = SpaceAdapter(displayItem)
                 space_fileList.adapter = adapter
+                editStatus = EDIT_CLOSE
+                space_bottom_edit.visibility = View.GONE
             }
             popbtn_rar.setOnClickListener {
-                popupWindow.dismiss()
-                adapter = SpaceAdapter(test_infos.filter { file ->
+                displayItem.clear()
+                PanRepository.selectedItem.clear()
+                PanRepository.selectedCount.value = 0
+                displayItem.addAll(test_infos.filter { file ->
                     file.Type == RAR_STRING
                 })
+                adapter = SpaceAdapter(displayItem)
                 space_fileList.adapter = adapter
+                editStatus = EDIT_CLOSE
+                space_bottom_edit.visibility = View.GONE
             }
             popbtn_file.setOnClickListener {
                 popupWindow.dismiss()
-                adapter = SpaceAdapter(test_infos)
+                displayItem.clear()
+                PanRepository.selectedItem.clear()
+                PanRepository.selectedCount.value = 0
+                displayItem.addAll(test_infos)
+                adapter = SpaceAdapter(displayItem)
                 space_fileList.adapter = adapter
+                editStatus = EDIT_CLOSE
+                space_bottom_edit.visibility = View.GONE
             }
         }
         space_add.setOnClickListener {
@@ -145,16 +176,18 @@ class PanActivity : BaseActivity() {
                 space_bottom_edit.visibility = View.GONE
                 item_check.visibility = View.GONE
                 adapter?.setEditMode(EDIT_CLOSE)
+                PanRepository.selectedItem.clear()
+                PanRepository.selectedCount.value = 0
                 space_fileList.adapter = adapter
             }
         }
         space_edit_all.setOnClickListener {
             if (space_edit_all.text == "全选") {
-                PanRepository.selectedItemAddAll(test_infos)
+                PanRepository.selectedItemAddAll(displayItem)
                 adapter?.notifyDataSetChanged()
             }
             else {
-                PanRepository.selectedItemRemoveAll(test_infos)
+                PanRepository.selectedItemRemoveAll(displayItem)
                 adapter?.notifyDataSetChanged()
             }
         }
