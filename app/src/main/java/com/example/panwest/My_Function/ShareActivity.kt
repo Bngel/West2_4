@@ -1,6 +1,5 @@
 package com.example.panwest.My_Function
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.panwest.Adapter.SpaceAdapter
@@ -26,8 +25,12 @@ class ShareActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_share)
+        flushList()
+    }
 
-        val adapter = SpaceAdapter(test_infos)
+    private fun flushList() {
+        shareList.addAll(test_infos)
+        val adapter = SpaceAdapter(shareList)
         share_fileList.adapter = adapter
         share_fileList.layoutManager = LinearLayoutManager(this)
     }

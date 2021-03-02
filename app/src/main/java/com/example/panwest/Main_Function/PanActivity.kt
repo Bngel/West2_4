@@ -1,16 +1,21 @@
 package com.example.panwest.Main_Function
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.PopupWindow
 import androidx.appcompat.app.ActionBar
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.panwest.Adapter.SpaceAdapter
 import com.example.panwest.BaseActivity
 import com.example.panwest.R
 import com.example.panwest.Data.PanFile
+import com.example.panwest.Main_Function.Pan_Function.PanRepository
 import kotlinx.android.synthetic.main.activity_pan.*
+import kotlinx.android.synthetic.main.item_file.*
 
 class PanActivity : BaseActivity() {
     private val MUSIC_STRING = "MUSIC"
@@ -18,6 +23,13 @@ class PanActivity : BaseActivity() {
     private val PHOTO_STRING = "PHOTO"
     private val FILE_STRING = "FILE"
     private val RAR_STRING = "RAR"
+    private val FILE_CHOOSE = 0X11
+    private val STRING_CHOOSE = "请选择上传的文件"
+    private var editStatus = false
+    private val EDIT_OPEN = true
+    private val EDIT_CLOSE = false
+
+    private var adapter :SpaceAdapter?  = null
 
     val test_infos = listOf(
         PanFile("PHOTO", R.drawable.type_photo, "img1.png", "testUrl"),
@@ -35,11 +47,18 @@ class PanActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pan)
-
-        val adapter = SpaceAdapter(test_infos)
+        adapter = SpaceAdapter(test_infos)
         space_fileList.adapter = adapter
         space_fileList.layoutManager = LinearLayoutManager(this)
-
+        PanRepository.selectedCount.observe(this, Observer { newCount ->
+            space_edit_count.text = newCount.toString()
+            if (newCount == adapter?.itemCount) {
+                space_edit_all.text = "取消全选"
+            }
+            else {
+                space_edit_all.text = "全选"
+            }
+        })
         setClickEvent()
     }
 
@@ -60,36 +79,94 @@ class PanActivity : BaseActivity() {
 
             popbtn_photo.setOnClickListener {
                 popupWindow.dismiss()
-                val adapter = SpaceAdapter(test_infos.filter { file ->
+                adapter = SpaceAdapter(test_infos.filter { file ->
                     file.Type == PHOTO_STRING
                 })
                 space_fileList.adapter = adapter
             }
             popbtn_movie.setOnClickListener {
                 popupWindow.dismiss()
-                val adapter = SpaceAdapter(test_infos.filter { file ->
+                adapter = SpaceAdapter(test_infos.filter { file ->
                     file.Type == MOVIE_STRING
                 })
                 space_fileList.adapter = adapter
             }
             popbtn_music.setOnClickListener {
                 popupWindow.dismiss()
-                val adapter = SpaceAdapter(test_infos.filter { file ->
+                adapter = SpaceAdapter(test_infos.filter { file ->
                     file.Type == MUSIC_STRING
                 })
                 space_fileList.adapter = adapter
             }
             popbtn_rar.setOnClickListener {
                 popupWindow.dismiss()
-                val adapter = SpaceAdapter(test_infos.filter { file ->
+                adapter = SpaceAdapter(test_infos.filter { file ->
                     file.Type == RAR_STRING
                 })
                 space_fileList.adapter = adapter
             }
             popbtn_file.setOnClickListener {
                 popupWindow.dismiss()
-                val adapter = SpaceAdapter(test_infos)
+                adapter = SpaceAdapter(test_infos)
                 space_fileList.adapter = adapter
+            }
+        }
+        space_add.setOnClickListener {
+            val popupView = layoutInflater.inflate(R.layout.item_pop_add,
+                null,false)
+            val popupWindow = PopupWindow(popupView, ActionBar.LayoutParams.WRAP_CONTENT,
+                ActionBar.LayoutParams.WRAP_CONTENT, true)
+            popupWindow.showAsDropDown(space_add,0,35)
+
+            val popbtn_upload = popupView.findViewById<Button>(R.id.add_popbutton_upload)
+            val popbtn_dir = popupView.findViewById<Button>(R.id.add_popbutton_dir)
+
+            popbtn_upload.setOnClickListener {
+                popupWindow.dismiss()
+                val fileIntent = Intent()
+                    .setType("*/*")
+                    .setAction(Intent.ACTION_GET_CONTENT)
+                startActivityForResult(Intent.createChooser(fileIntent, STRING_CHOOSE), FILE_CHOOSE)
+            }
+            popbtn_dir.setOnClickListener {
+                popupWindow.dismiss()
+            }
+        }
+        space_edit.setOnClickListener {
+            if (editStatus == EDIT_CLOSE) {
+                editStatus = EDIT_OPEN
+                space_bottom_edit.visibility = View.VISIBLE
+                item_check.visibility = View.VISIBLE
+                adapter?.setEditMode(EDIT_OPEN)
+                space_fileList.adapter = adapter
+            }
+            else if (editStatus == EDIT_OPEN) {
+                editStatus = EDIT_CLOSE
+                space_bottom_edit.visibility = View.GONE
+                item_check.visibility = View.GONE
+                adapter?.setEditMode(EDIT_CLOSE)
+                space_fileList.adapter = adapter
+            }
+        }
+        space_edit_all.setOnClickListener {
+            if (space_edit_all.text == "全选") {
+                PanRepository.selectedItemAddAll(test_infos)
+                adapter?.notifyDataSetChanged()
+            }
+            else {
+                PanRepository.selectedItemRemoveAll(test_infos)
+                adapter?.notifyDataSetChanged()
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                FILE_CHOOSE -> {
+                    val url = data?.data // 待上传的文件链接
+                }
             }
         }
     }

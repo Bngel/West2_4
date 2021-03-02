@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
@@ -53,6 +54,7 @@ class MainActivity : BaseActivity() {
     private val path = ""
 
 
+
     @SuppressLint("CommitPrefEdits")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,9 +63,22 @@ class MainActivity : BaseActivity() {
         // 动态申请存储权限，后面读取文件有用
         requestStoragePermission();
         setClickEvent()
-        if(intent.getBooleanExtra("switch_success", false))
+        val DOWNLOAD_PATH = applicationContext.filesDir.absolutePath + "/PanWestDownload"
+        makeDir(DOWNLOAD_PATH)
+        if (intent.getBooleanExtra("switch_success", false))
             ActivityCollector.onlyActivity(this)
         defaultLogin()
+    }
+
+    private fun makeDir(dir: String){
+        // I/O logic
+        val sciezka = File(dir)
+        if (sciezka.mkdirs()) {
+            Log.d("TEXT_TTT", dir)
+        }
+        else {
+            Log.d("TEXT_TTT", "existed")
+        }
     }
 
     private fun getLoginState(): Pair<Boolean, Pair<String?, String?>> {
@@ -89,8 +104,9 @@ class MainActivity : BaseActivity() {
                     defaultLoad(loginStatus.user)
                 }
                 else {
-                    val loginIntent = Intent(this, LoginActivity::class.java)
-                    startActivityForResult(loginIntent, LOGIN_ACTIVITY)
+                    /*val loginIntent = Intent(this, LoginActivity::class.java)
+                    startActivityForResult(loginIntent, LOGIN_ACTIVITY)*/
+                    Toast.makeText(this, "网络未连接", Toast.LENGTH_SHORT).show()
                 }
             }
         }

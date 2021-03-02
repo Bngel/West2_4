@@ -8,6 +8,7 @@ import com.example.panwest.Data.User
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.net.SocketTimeoutException
 import kotlin.concurrent.thread
 
 object AccountRepository {
@@ -18,10 +19,13 @@ object AccountRepository {
         val login = accountService.userLogin(user.username, user.password)
         var res : LoginJson? = null
         thread {
-            val body = login.execute().body()
-            Log.d("TEXT_TTT", body.toString())
-            res = body
-        }.join()
+            try {
+                val body = login.execute().body()
+                Log.d("TEXT_TTT", body.toString())
+                res = body
+            } catch (e: SocketTimeoutException) {
+            }
+        }.join(2000)
         return res
     }
 

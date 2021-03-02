@@ -1,6 +1,5 @@
 package com.example.panwest.My_Function
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.panwest.Adapter.SpaceAdapter
@@ -27,7 +26,12 @@ class DeleteActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_delete)
-        val adapter = SpaceAdapter(test_infos)
+        flushList()
+    }
+
+    private fun flushList() {
+        deleteList.addAll(test_infos)
+        val adapter = SpaceAdapter(deleteList)
         delete_fileList.adapter = adapter
         delete_fileList.layoutManager = LinearLayoutManager(this)
     }

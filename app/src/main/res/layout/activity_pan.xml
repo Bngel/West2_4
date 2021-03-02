@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -38,6 +39,15 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="20dp"
             android:layout_centerVertical="true"/>
+
+        <ImageView
+            android:id="@+id/space_add"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/space_add"
+            android:layout_toStartOf="@id/space_filtrate"
+            android:layout_marginEnd="10dp"
+            android:layout_centerVertical="true"/>
     </RelativeLayout>
 
     <ImageView
@@ -46,10 +56,28 @@
         android:layout_marginTop="5dp"
         android:background="@color/colorSky"/>
 
-    <com.example.panwest.UI.Widgets.searchEdittextView
-        android:id="@+id/space_searchEdittext"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.example.panwest.UI.Widgets.searchEdittextView
+            android:id="@+id/space_searchEdittext"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/space_edit"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/space_edit"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="5dp"/>
+
+    </LinearLayout>
+
 
     <ImageView
         android:layout_width="match_parent"
@@ -59,6 +87,76 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/space_fileList"
+        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"/>
+
+    <LinearLayout
+        android:id="@+id/space_bottom_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/space_edit_selected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="15dp"
+            android:textSize="18sp"
+            android:text="@string/string_selected"
+            android:textColor="@color/colorSky"/>
+
+        <TextView
+            android:id="@+id/space_edit_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
+            android:textSize="18sp"
+            android:text="@string/default_pan_count"
+            android:textColor="@color/colorSky"/>
+
+        <Button
+            android:id="@+id/space_edit_all"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:background="@drawable/button_shape"
+            android:text="@string/string_all_selected"
+            android:layout_gravity="right"
+            tools:ignore="RtlHardcoded"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"/>
+
+        <Button
+            android:id="@+id/space_edit_delete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/button_shape"
+            android:text="@string/string_delete"
+            android:layout_gravity="right"
+            tools:ignore="RtlHardcoded"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"/>
+
+        <Button
+            android:id="@+id/space_edit_download"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/button_shape"
+            android:text="@string/string_download"
+            android:layout_gravity="right"
+            tools:ignore="RtlHardcoded"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"/>
+
+    </LinearLayout>
 </LinearLayout>

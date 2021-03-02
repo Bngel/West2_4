@@ -7,6 +7,7 @@ import com.example.panwest.Adapter.SpaceAdapter
 import com.example.panwest.BaseActivity
 import com.example.panwest.Data.PanFile
 import com.example.panwest.R
+import kotlinx.android.synthetic.main.activity_delete.*
 import kotlinx.android.synthetic.main.activity_download.*
 
 class DownloadActivity : BaseActivity() {
@@ -27,7 +28,12 @@ class DownloadActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_download)
-        val adapter = SpaceAdapter(test_infos)
+        flushList()
+    }
+
+    private fun flushList() {
+        downloadList.addAll(test_infos)
+        val adapter = SpaceAdapter(downloadList)
         download_fileList.adapter = adapter
         download_fileList.layoutManager = LinearLayoutManager(this)
     }

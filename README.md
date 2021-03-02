@@ -11,3 +11,6 @@
 ## Retrofit 使用参考
 - https://stackoverflow.com/questions/47997594/expected-a-string-but-was-begin-array-gson
 - http://www.kotlincodes.com/kotlin/retrofit-with-kotlin/
+
+## 关于文件File
+- https://www.coder.work/article/6288575

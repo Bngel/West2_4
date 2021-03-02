@@ -1,6 +1,5 @@
 package com.example.panwest.My_Function
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.panwest.Adapter.SpaceAdapter
@@ -27,8 +26,12 @@ class StarActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_star)
+        flushList()
+    }
 
-        val adapter = SpaceAdapter(test_infos)
+    private fun flushList() {
+        starList.addAll(test_infos)
+        val adapter = SpaceAdapter(starList)
         star_fileList.adapter = adapter
         star_fileList.layoutManager = LinearLayoutManager(this)
     }
