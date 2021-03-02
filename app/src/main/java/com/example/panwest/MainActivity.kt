@@ -10,11 +10,10 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
+import android.os.FileUtils
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import butterknife.ButterKnife
 import com.bumptech.glide.Glide
@@ -32,6 +31,9 @@ import com.example.panwest.My_Function.StarActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_meform_main.*
 import kotlinx.android.synthetic.main.view_my_main.*
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import java.io.File
 
 
@@ -116,8 +118,10 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun defaultLoad(user: User) {
         me_userName.text = user.username
+        me_userSpace.text = "${1024 - user.space}MB/1024MB"
     }
 
     private fun setClickEvent() {
@@ -191,8 +195,8 @@ class MainActivity : BaseActivity() {
             CROP_PHOTO -> if (resultCode == RESULT_OK) {
                 try {
                     if (imageUri != null)
-                        Log.d("TAG",imageUri.toString())
-                        displayImage(imageUri!!)
+                        Log.d("TAG", imageUri.toString())
+                    displayImage(imageUri!!)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -275,7 +279,11 @@ class MainActivity : BaseActivity() {
      */
     private fun displayImage(imageUri: Uri) {
         try {
-            Log.d("TAG",imageUri.toString())
+            val file = File(imageUri.path)
+            val requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+            val part = MultipartBody.Part.createFormData("file", file.name, requestFile);
+            val result = AccountRepository.accountPhoto(part, me_userName.text.toString())
+            Log.d("TEXT_TTT", result!!.status)
             Glide.with(this)
                 .load(imageUri)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -283,8 +291,14 @@ class MainActivity : BaseActivity() {
                 .error(R.drawable.me_error) // 异常占位图
                 .centerCrop()
                 .into(me_portraitImage)
-        } catch (e: Exception) {
-            e.printStackTrace()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
-}
+
+/*val file = File(imageUri.toString())
+val fileRQ = RequestBody.create(MediaType.parse("image/*"), file)
+val part = MultipartBody.Part.createFormData("photo", file.name, fileRQ)
+val result = AccountRepository.accountPhoto(part, me_userName.text.toString())
+Log.d("TAG", result!!)*/

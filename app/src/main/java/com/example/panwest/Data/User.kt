@@ -12,5 +12,11 @@ data class User(
     val password: String,
     @Expose
     @SerializedName("email")
-    val email: String
+    val email: String,
+    @Expose
+    @SerializedName("photo")
+    val photo: String,
+    @Expose
+    @SerializedName("space")
+    val space: Int
     )
