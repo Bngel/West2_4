@@ -18,13 +18,14 @@ import androidx.core.content.ContextCompat
 import butterknife.ButterKnife
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.example.panwest.My_Function.DeleteActivity
+
 import com.example.panwest.Data.User
 import com.example.panwest.Login_Function.AccountRepository
 import com.example.panwest.Login_Function.LoginActivity
 import com.example.panwest.Main_Function.MoreActivity
 import com.example.panwest.Main_Function.PanActivity
 import com.example.panwest.Main_Function.SettingActivity
-import com.example.panwest.My_Function.DeleteActivity
 import com.example.panwest.My_Function.DownloadActivity
 import com.example.panwest.My_Function.ShareActivity
 import com.example.panwest.My_Function.StarActivity
@@ -100,8 +101,10 @@ class MainActivity : BaseActivity() {
         if (userState) {
             val userName = userAccount.first!!
             val userPassword = userAccount.second!!
+            AccountRepository.accountGetPhoto(userName)
             if (userPassword != "" && userName != "") {
                 val loginStatus = AccountRepository.accountLogin(userName, userPassword)
+                AccountRepository.accountGetPhoto(userName)
                 if (loginStatus != null && loginStatus.status) {
                     defaultLoad(loginStatus.user)
                 }

@@ -1,12 +1,10 @@
 package com.example.panwest.WebService_Function
 
-import com.example.panwest.Data.LoginJson
-import com.example.panwest.Data.PhotoJson
-import com.example.panwest.Data.RegisterJson
+import com.example.panwest.Data.Json.LoginJson
+import com.example.panwest.Data.Json.PhotoJson
+import com.example.panwest.Data.Json.RegisterJson
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -34,6 +32,11 @@ interface WebService {
         @Part file: MultipartBody.Part,
         @Part("username") username: String):
             Call<PhotoJson>
+
+    @POST("getPhoto")
+    fun getUserPhoto(
+        @Query("username") username: String):
+            Call<String>
 
     companion object Factory {
         fun create() : WebService {

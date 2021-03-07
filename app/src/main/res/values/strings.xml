@@ -41,4 +41,7 @@
     <string name="string_delete">删除</string>
     <string name="string_download">下载</string>
     <string name="string_all_selected">全选</string>
+    <string name="string_open">打开</string>
+    <string name="string_restore">复原</string>
+    <string name="string_delete_yes">删除</string>
 </resources>

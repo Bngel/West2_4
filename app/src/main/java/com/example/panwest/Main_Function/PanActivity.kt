@@ -51,6 +51,7 @@ class PanActivity : BaseActivity() {
         adapter = SpaceAdapter(test_infos)
         space_fileList.adapter = adapter
         space_fileList.layoutManager = LinearLayoutManager(this)
+        initData()
         PanRepository.selectedCount.observe(this, Observer { newCount ->
             space_edit_count.text = newCount.toString()
             if (newCount == adapter?.itemCount) {
@@ -132,14 +133,7 @@ class PanActivity : BaseActivity() {
             }
             popbtn_file.setOnClickListener {
                 popupWindow.dismiss()
-                displayItem.clear()
-                PanRepository.selectedItem.clear()
-                PanRepository.selectedCount.value = 0
-                displayItem.addAll(test_infos)
-                adapter = SpaceAdapter(displayItem)
-                space_fileList.adapter = adapter
-                editStatus = EDIT_CLOSE
-                space_bottom_edit.visibility = View.GONE
+                initData()
             }
         }
         space_add.setOnClickListener {
@@ -202,5 +196,16 @@ class PanActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    private fun initData() {
+        displayItem.clear()
+        PanRepository.selectedItem.clear()
+        PanRepository.selectedCount.value = 0
+        displayItem.addAll(test_infos)
+        adapter = SpaceAdapter(displayItem)
+        space_fileList.adapter = adapter
+        editStatus = EDIT_CLOSE
+        space_bottom_edit.visibility = View.GONE
     }
 }

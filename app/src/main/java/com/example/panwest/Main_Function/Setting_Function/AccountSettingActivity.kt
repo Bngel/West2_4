@@ -32,6 +32,7 @@ class AccountSettingActivity : BaseActivity() {
     @SuppressLint("CommitPrefEdits")
     private fun setClickEvent() {
         account_setting_item_switch.setOnClickListener {
+            finish()
             val loginIntent = Intent(this, LoginActivity::class.java)
             startActivityForResult(loginIntent, SWITCH_ACTIVITY)
         }
@@ -63,7 +64,9 @@ class AccountSettingActivity : BaseActivity() {
             LOGOUT_ACTIVITY -> if (resultCode == Activity.RESULT_CANCELED) {
                 finish()
             } else {
-                TODO("login successfully")
+                val mainIntent = Intent(this, MainActivity::class.java)
+                setResult(RESULT_OK, mainIntent)
+                startActivity(mainIntent)
             }
         }
     }

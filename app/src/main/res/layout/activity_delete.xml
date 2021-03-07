@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:background="#F5F6FA">
 
@@ -17,6 +18,28 @@
         android:layout_height="1dp"
         android:layout_marginBottom="5dp"
         android:background="@color/colorSky"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/delete_edit"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/space_edit"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="20dp"
+            android:layout_centerVertical="true"/>
+
+        <ImageView
+            android:id="@+id/delete_filtrate"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/space_filtrate"
+            android:layout_toStartOf="@id/delete_edit"
+            android:layout_marginEnd="10dp"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
 
     <com.example.panwest.UI.Widgets.searchEdittextView
         android:id="@+id/delete_searchEdittext"
@@ -31,6 +54,76 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/delete_fileList"
+        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"/>
+
+    <LinearLayout
+        android:id="@+id/delete_bottom_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/delete_edit_selected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="15dp"
+            android:textSize="18sp"
+            android:text="@string/string_selected"
+            android:textColor="@color/colorSky"/>
+
+        <TextView
+            android:id="@+id/delete_edit_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
+            android:textSize="18sp"
+            android:text="@string/default_pan_count"
+            android:textColor="@color/colorSky"/>
+
+        <Button
+            android:id="@+id/delete_edit_all"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:background="@drawable/button_shape"
+            android:text="@string/string_all_selected"
+            android:layout_gravity="right"
+            tools:ignore="RtlHardcoded"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"/>
+
+        <Button
+            android:id="@+id/delete_edit_restore"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/button_shape"
+            android:text="@string/string_restore"
+            android:layout_gravity="right"
+            tools:ignore="RtlHardcoded"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"/>
+
+        <Button
+            android:id="@+id/delete_edit_delete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/button_shape"
+            android:text="@string/string_delete_yes"
+            android:layout_gravity="right"
+            tools:ignore="RtlHardcoded"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"/>
+
+    </LinearLayout>
 </LinearLayout>
