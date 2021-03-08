@@ -1,5 +1,7 @@
 package com.example.panwest.WebService_Function
 
+import com.example.panwest.Data.FileData
+import com.example.panwest.Data.Json.LoadFilesJson
 import com.example.panwest.Data.Json.LoginJson
 import com.example.panwest.Data.Json.PhotoJson
 import com.example.panwest.Data.Json.RegisterJson
@@ -37,6 +39,14 @@ interface WebService {
     fun getUserPhoto(
         @Query("username") username: String):
             Call<String>
+
+    @POST("getFileInformation")
+    fun getFileInformation(
+        @Query("username") username: String,
+        @Query("parentFile") parentFile: String):
+            Call<LoadFilesJson>
+
+
 
     companion object Factory {
         fun create() : WebService {

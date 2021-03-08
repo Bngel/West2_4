@@ -10,5 +10,8 @@ data class LoginJson(
     val status: Boolean,
     @Expose
     @SerializedName("user")
-    val user: User
+    val user: User,
+    @Expose
+    @SerializedName("token")
+    val token: String
     )

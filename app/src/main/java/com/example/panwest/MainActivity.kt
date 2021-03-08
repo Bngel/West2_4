@@ -97,7 +97,6 @@ class MainActivity : BaseActivity() {
         val user = getLoginState()
         val userState = user.first
         val userAccount = user.second
-        Log.d("TEXT_TTT", userState.toString())
         if (userState) {
             val userName = userAccount.first!!
             val userPassword = userAccount.second!!
@@ -124,7 +123,7 @@ class MainActivity : BaseActivity() {
     @SuppressLint("SetTextI18n")
     private fun defaultLoad(user: User) {
         me_userName.text = user.username
-        me_userSpace.text = "${1024 - user.space}MB/1024MB"
+        me_userSpace.text = "${1024.0 - user.space}MB/1024MB"
     }
 
     private fun setClickEvent() {

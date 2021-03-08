@@ -15,8 +15,8 @@ data class User(
     val email: String,
     @Expose
     @SerializedName("photo")
-    val photo: String,
+    val photo: String?,
     @Expose
     @SerializedName("space")
-    val space: Int
+    val space: Double
     )

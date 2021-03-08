@@ -1,6 +1,7 @@
 package com.example.panwest.Main_Function
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.panwest.Adapter.SpaceAdapter
 import com.example.panwest.BaseActivity
+import com.example.panwest.Data.FileData
 import com.example.panwest.R
 import com.example.panwest.Data.PanFile
 import com.example.panwest.Main_Function.Pan_Function.PanRepository
@@ -18,6 +20,7 @@ import kotlinx.android.synthetic.main.activity_pan.*
 import kotlinx.android.synthetic.main.item_file.*
 
 class PanActivity : BaseActivity() {
+    private val LOGIN_STATE = "login_state"
     private val MUSIC_STRING = "MUSIC"
     private val MOVIE_STRING = "MOVIE"
     private val PHOTO_STRING = "PHOTO"
@@ -51,6 +54,7 @@ class PanActivity : BaseActivity() {
         adapter = SpaceAdapter(test_infos)
         space_fileList.adapter = adapter
         space_fileList.layoutManager = LinearLayoutManager(this)
+        loadFileInformation()
         initData()
         PanRepository.selectedCount.observe(this, Observer { newCount ->
             space_edit_count.text = newCount.toString()
@@ -207,5 +211,26 @@ class PanActivity : BaseActivity() {
         space_fileList.adapter = adapter
         editStatus = EDIT_CLOSE
         space_bottom_edit.visibility = View.GONE
+    }
+
+    private fun getLoginState(): Pair<Boolean, Pair<String?, String?>> {
+        val userInfo = getSharedPreferences(LOGIN_STATE, Context.MODE_PRIVATE)
+        val userState = userInfo.getBoolean("STATE", false)
+        val userID = userInfo.getString("ID", "")
+        val userPswd = userInfo.getString("PSWD", "")
+        val user = Pair(userID, userPswd)
+        return Pair(userState, user)
+    }
+
+    private fun loadFileInformation(): List<FileData>? {
+        val user = getLoginState()
+        val userStatus = user.first
+        val userAccount = user.second
+        if (userStatus) {
+            return PanRepository.loadFileInformation("gaoxu", "/ck/data")
+        }
+        else {
+            return null
+        }
     }
 }
