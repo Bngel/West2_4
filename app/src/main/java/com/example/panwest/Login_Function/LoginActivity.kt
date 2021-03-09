@@ -33,8 +33,8 @@ class LoginActivity : BaseActivity() {
         pan_login_btn.setOnClickListener {
             val userAccount = login_pan_id.text.toString()
             val userPassword = login_pan_pswd.text.toString()
-            val userStatus = AccountRepository.accountLogin(userAccount, userPassword)
-            if (userStatus != null && userStatus.status) {
+            AccountRepository.accountLogin(userAccount, userPassword)
+            if (AccountRepository.user != null && AccountRepository.status != null && AccountRepository.status!!) {
                 val userInfo = getSharedPreferences(LOGIN_STATE, Context.MODE_PRIVATE).edit()
                 userInfo.apply {
                     putBoolean("STATE", true)

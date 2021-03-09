@@ -30,6 +30,7 @@ import com.example.panwest.My_Function.DownloadActivity
 import com.example.panwest.My_Function.ShareActivity
 import com.example.panwest.My_Function.StarActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_pan.*
 import kotlinx.android.synthetic.main.view_meform_main.*
 import kotlinx.android.synthetic.main.view_my_main.*
 import okhttp3.MediaType
@@ -104,8 +105,8 @@ class MainActivity : BaseActivity() {
             if (userPassword != "" && userName != "") {
                 val loginStatus = AccountRepository.accountLogin(userName, userPassword)
                 AccountRepository.accountGetPhoto(userName)
-                if (loginStatus != null && loginStatus.status) {
-                    defaultLoad(loginStatus.user)
+                if (AccountRepository.user != null && AccountRepository.status != null && AccountRepository.status!!) {
+                    defaultLoad(AccountRepository.user!!)
                 }
                 else {
                     /*val loginIntent = Intent(this, LoginActivity::class.java)
@@ -123,7 +124,7 @@ class MainActivity : BaseActivity() {
     @SuppressLint("SetTextI18n")
     private fun defaultLoad(user: User) {
         me_userName.text = user.username
-        me_userSpace.text = "${1024.0 - user.space}MB/1024MB"
+        me_userSpace.text = "%.2fMB/1024MB".format(1024.0 - user.space)
     }
 
     private fun setClickEvent() {
@@ -202,6 +203,9 @@ class MainActivity : BaseActivity() {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
+            }
+            SPACE_ACTIVITY -> {
+                defaultLoad(AccountRepository.user!!)
             }
         }
     }

@@ -159,7 +159,6 @@ class DeleteActivity : BaseActivity() {
         }
         delete_edit_all.setOnClickListener {
             if (delete_edit_all.text == "全选") {
-                Log.d("TEXT_TTT", displayItem.size.toString())
                 MyRepository.deletedItemAddAll(displayItem)
                 adapter?.notifyDataSetChanged()
             }

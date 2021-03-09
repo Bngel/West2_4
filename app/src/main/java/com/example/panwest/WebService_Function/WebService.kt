@@ -1,10 +1,7 @@
 package com.example.panwest.WebService_Function
 
 import com.example.panwest.Data.FileData
-import com.example.panwest.Data.Json.LoadFilesJson
-import com.example.panwest.Data.Json.LoginJson
-import com.example.panwest.Data.Json.PhotoJson
-import com.example.panwest.Data.Json.RegisterJson
+import com.example.panwest.Data.Json.*
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -46,6 +43,32 @@ interface WebService {
         @Query("parentFile") parentFile: String):
             Call<LoadFilesJson>
 
+    @Multipart
+    @POST("upload")
+    fun uploadFile(
+        @Part file: MultipartBody.Part,
+        @Part("username") username: String,
+        @Part("parentFile") parentFile: String):
+            Call<UploadFileJson>
+
+    @POST("delete")
+    fun deleteFile(
+        @Query("username") username: String,
+        @Query("url") url: String):
+            Call<DeleteFileJson>
+
+    @POST("deleteFile")
+    fun deletePackage(
+        @Query("username") username: String,
+        @Query("url") url: String):
+            Call<DeletePackageJson>
+
+    @POST("createNewFile")
+    fun createPackage(
+        @Query("username") username: String,
+        @Query("Filename") package_name: String,
+        @Query("parentFile") parentFile: String):
+            Call<CreatePackageJson>
 
 
     companion object Factory {

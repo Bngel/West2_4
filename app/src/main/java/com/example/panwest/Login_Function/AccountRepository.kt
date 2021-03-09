@@ -11,22 +11,22 @@ import java.net.SocketTimeoutException
 import kotlin.concurrent.thread
 
 
-    object AccountRepository {
+object AccountRepository {
+
+    var user: User? = null
+    var status: Boolean? = null
     private val accountService = WebService.create()
 
-    fun accountLogin(account: String, pswd: String): LoginJson? {
-        val user = User(account, pswd, "", null, 1024.0)
-        val login = accountService.userLogin(user.username, user.password)
-        var res : LoginJson? = null
+    fun accountLogin(account: String, pswd: String){
+        val login = accountService.userLogin(account, pswd)
         thread {
             try {
                 val body = login.execute().body()
-                Log.d("TEXT_TTT", body.toString())
-                res = body
+                user = body.user
+                status = body.status
             } catch (e: SocketTimeoutException) {
             }
         }.join(2000)
-        return res
     }
 
     fun accountRegister(account: String, pswd: String, email: String): RegisterJson? {
