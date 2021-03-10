@@ -83,6 +83,10 @@ class SpaceAdapter(private val files: List<FileData>): RecyclerView.Adapter<Spac
 
                     popbtn_download.setOnClickListener {
                         popupWindow.dismiss()
+                        PanRepository.downloadFile(parent.context,
+                        AccountRepository.user?.username?:"",
+                        files[viewHolder.adapterPosition].url,
+                        files[viewHolder.adapterPosition].filename)
                     }
                     popbtn_delete.setOnClickListener {
                         popupWindow.dismiss()

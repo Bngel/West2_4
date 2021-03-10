@@ -3,26 +3,25 @@ package com.example.panwest.Main_Function.Pan_Function
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.room.Delete
 import com.example.panwest.Data.FileData
-import com.example.panwest.Data.Json.CreatePackageJson
-import com.example.panwest.Data.Json.DeleteFileJson
-import com.example.panwest.Data.Json.DeletePackageJson
-import com.example.panwest.Data.Json.UploadFileJson
+import com.example.panwest.Data.Json.*
 import com.example.panwest.Login_Function.AccountRepository
 import com.example.panwest.WebService_Function.WebService
 import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.*
 import java.net.SocketTimeoutException
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.thread
 
+
 object PanRepository {
+    var DOWNLOAD_PATH :String? = null
     var current_dir = MutableLiveData<String>("/ck/data")
     var parent_dir = Stack<String>()
     val flushCheck = MutableLiveData<Boolean>(false)
@@ -82,10 +81,10 @@ object PanRepository {
                 val body = response?.body()
                 if (body != null) {
                     if (body.status == "success") {
-                        Toast.makeText(context, "上传成功, 用时${body.costTime}s", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "上传成功, 用时${body.costTime}s", Toast.LENGTH_SHORT)
+                            .show()
                         flushCheck.value = true
-                    }
-                    else {
+                    } else {
                         Toast.makeText(context, "上传失败", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -110,10 +109,12 @@ object PanRepository {
                 if (body != null) {
                     if (body.status == "success") {
                         Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show()
-                        AccountRepository.accountLogin(AccountRepository.user?.username?:"", AccountRepository.user?.password?:"")
+                        AccountRepository.accountLogin(
+                            AccountRepository.user?.username ?: "",
+                            AccountRepository.user?.password ?: ""
+                        )
                         flushCheck.value = true
-                    }
-                    else {
+                    } else {
                         Toast.makeText(context, "删除失败", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -138,10 +139,12 @@ object PanRepository {
                 if (body != null) {
                     if (body.status == "success") {
                         Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show()
-                        AccountRepository.accountLogin(AccountRepository.user?.username?:"", AccountRepository.user?.password?:"")
+                        AccountRepository.accountLogin(
+                            AccountRepository.user?.username ?: "",
+                            AccountRepository.user?.password ?: ""
+                        )
                         flushCheck.value = true
-                    }
-                    else {
+                    } else {
                         Toast.makeText(context, "删除失败", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -166,10 +169,12 @@ object PanRepository {
                 if (body != null) {
                     if (body.status == "success") {
                         Toast.makeText(context, "创建成功", Toast.LENGTH_SHORT).show()
-                        AccountRepository.accountLogin(AccountRepository.user?.username?:"", AccountRepository.user?.password?:"")
+                        AccountRepository.accountLogin(
+                            AccountRepository.user?.username ?: "",
+                            AccountRepository.user?.password ?: ""
+                        )
                         flushCheck.value = true
-                    }
-                    else {
+                    } else {
                         Toast.makeText(context, "创建失败", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -180,5 +185,57 @@ object PanRepository {
             }
 
         })
+    }
+
+    fun downloadFile(context: Context, username: String, url: String, filename: String) {
+        val download = panService.downloadFile(username, url)
+        download.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
+                val body = response?.body()
+                if (body != null) {
+                    writeResponseBodyToDisk(body, filename)
+                    Toast.makeText(context, "下载成功", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>?, t: Throwable?) {
+                Toast.makeText(context, "下载失败", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+    }
+
+    private fun writeResponseBodyToDisk(body: ResponseBody, filename: String): Boolean {
+        return try {
+            val futureStudioIconFile =
+                File("$DOWNLOAD_PATH/$filename")
+            var inputStream: InputStream? = null
+            var outputStream: OutputStream? = null
+            try {
+                val fileReader = ByteArray(4096)
+                val fileSize = body.contentLength()
+                var fileSizeDownloaded: Long = 0
+                inputStream = body.byteStream()
+                outputStream = FileOutputStream(futureStudioIconFile)
+                while (true) {
+                    val read: Int = inputStream.read(fileReader)
+                    if (read == -1) {
+                        break
+                    }
+                    outputStream.write(fileReader, 0, read)
+                    fileSizeDownloaded += read.toLong()
+                    Log.d("DOWNLOAD", "file download: $fileSizeDownloaded of $fileSize")
+                }
+                outputStream.flush()
+                true
+            } catch (e: IOException) {
+                false
+            } finally {
+                inputStream?.close()
+                outputStream?.close()
+            }
+        } catch (e: IOException) {
+            false
+        }
     }
 }

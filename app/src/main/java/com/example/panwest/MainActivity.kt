@@ -25,12 +25,12 @@ import com.example.panwest.Login_Function.AccountRepository
 import com.example.panwest.Login_Function.LoginActivity
 import com.example.panwest.Main_Function.MoreActivity
 import com.example.panwest.Main_Function.PanActivity
+import com.example.panwest.Main_Function.Pan_Function.PanRepository
 import com.example.panwest.Main_Function.SettingActivity
 import com.example.panwest.My_Function.DownloadActivity
 import com.example.panwest.My_Function.ShareActivity
 import com.example.panwest.My_Function.StarActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_pan.*
 import kotlinx.android.synthetic.main.view_meform_main.*
 import kotlinx.android.synthetic.main.view_my_main.*
 import okhttp3.MediaType
@@ -67,8 +67,8 @@ class MainActivity : BaseActivity() {
         // 动态申请存储权限，后面读取文件有用
         requestStoragePermission();
         setClickEvent()
-        val DOWNLOAD_PATH = applicationContext.filesDir.absolutePath + "/PanWestDownload"
-        makeDir(DOWNLOAD_PATH)
+        PanRepository.DOWNLOAD_PATH = applicationContext.filesDir.absolutePath + "/PanWestDownload"
+        makeDir(PanRepository.DOWNLOAD_PATH!!)
         if (intent.getBooleanExtra("switch_success", false))
             ActivityCollector.onlyActivity(this)
         defaultLogin()

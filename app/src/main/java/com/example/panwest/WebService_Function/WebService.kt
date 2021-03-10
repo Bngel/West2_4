@@ -4,6 +4,7 @@ import com.example.panwest.Data.FileData
 import com.example.panwest.Data.Json.*
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -69,6 +70,13 @@ interface WebService {
         @Query("Filename") package_name: String,
         @Query("parentFile") parentFile: String):
             Call<CreatePackageJson>
+
+    @POST("download")
+    fun downloadFile(
+        @Query("username") username: String,
+        @Query("url") url: String):
+            Call<ResponseBody>
+
 
 
     companion object Factory {
