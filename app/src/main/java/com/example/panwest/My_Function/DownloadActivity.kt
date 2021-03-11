@@ -5,16 +5,21 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.PopupWindow
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.panwest.Adapter.MyAdapter.DownloadAdapter
+import com.example.panwest.Data.getTypeFormat
+import java.io.File
 import com.example.panwest.BaseActivity
-import com.example.panwest.Data.PanFile
+import com.example.panwest.Data.FileData
+import com.example.panwest.Login_Function.AccountRepository
+import com.example.panwest.Main_Function.Pan_Function.PanRepository
 import com.example.panwest.R
 import kotlinx.android.synthetic.main.activity_download.*
-import kotlinx.android.synthetic.main.activity_download.*
 import kotlinx.android.synthetic.main.item_file.*
+import kotlinx.android.synthetic.main.view_search_space.*
 
 class DownloadActivity : BaseActivity() {
     private val MUSIC_STRING = "MUSIC"
@@ -25,27 +30,22 @@ class DownloadActivity : BaseActivity() {
     private val EDIT_OPEN = true
     private val EDIT_CLOSE = false
     private var adapter :DownloadAdapter?  = null
-    private val displayItem = ArrayList<PanFile>()
-
-    val test_infos = listOf(
-        PanFile("PHOTO", R.drawable.type_photo, "img1.png", "testUrl"),
-        PanFile("PHOTO", R.drawable.type_photo, "img2.png", "testUrl"),
-        PanFile("PHOTO", R.drawable.type_photo, "img3.png", "testUrl"),
-        PanFile("PHOTO", R.drawable.type_photo, "img4.png", "testUrl"),
-        PanFile("MUSIC", R.drawable.type_music, "music1.mp3", "testUrl"),
-        PanFile("MUSIC", R.drawable.type_music, "music2.mp3", "testUrl"),
-        PanFile("MUSIC", R.drawable.type_music, "music3.mp3", "testUrl"),
-        PanFile("MOVIE", R.drawable.type_movie, "movie1.mp4", "testUrl"),
-        PanFile("RAR", R.drawable.type_rar, "rar1.zip", "testUrl"),
-        PanFile("FILE", R.drawable.type_file, "sb.ppp", "testUrl")
-    )
+    private val downloadFiles = ArrayList<FileData>()
+    private val displayItem = ArrayList<FileData>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_download)
-        flushList()
         initData()
+        download_fileList.layoutManager = LinearLayoutManager(this)
+        download_fileList.adapter = adapter
         setClickEvent()
+        MyRepository.downloadListFlush.observe(this, Observer { flush ->
+            if (flush) {
+                initData()
+                MyRepository.downloadListFlush.value = false
+            }
+        })
     }
 
     private fun setClickEvent() {
@@ -71,8 +71,8 @@ class DownloadActivity : BaseActivity() {
                 displayItem.clear()
                 MyRepository.downloadedItem.clear()
                 MyRepository.downloadCount.value = 0
-                displayItem.addAll(test_infos.filter { file ->
-                    file.Type == PHOTO_STRING
+                displayItem.addAll(downloadFiles.filter { file ->
+                    getTypeFormat(file.type) == PHOTO_STRING
                 })
                 adapter = DownloadAdapter(displayItem)
                 download_fileList.adapter = adapter
@@ -84,21 +84,22 @@ class DownloadActivity : BaseActivity() {
                 displayItem.clear()
                 MyRepository.downloadedItem.clear()
                 MyRepository.downloadCount.value = 0
-                displayItem.addAll(test_infos.filter { file ->
-                    file.Type == MOVIE_STRING
+                displayItem.addAll(downloadFiles.filter { file ->
+                    getTypeFormat(file.type) == MOVIE_STRING
                 })
                 adapter = DownloadAdapter(displayItem)
                 download_fileList.adapter = adapter
                 editStatus = EDIT_CLOSE
                 download_bottom_edit.visibility = View.GONE
+
             }
             popbtn_music.setOnClickListener {
                 popupWindow.dismiss()
                 displayItem.clear()
                 MyRepository.downloadedItem.clear()
                 MyRepository.downloadCount.value = 0
-                displayItem.addAll(test_infos.filter { file ->
-                    file.Type == MUSIC_STRING
+                displayItem.addAll(downloadFiles.filter { file ->
+                    getTypeFormat(file.type) == MUSIC_STRING
                 })
                 adapter = DownloadAdapter(displayItem)
                 download_fileList.adapter = adapter
@@ -106,11 +107,12 @@ class DownloadActivity : BaseActivity() {
                 download_bottom_edit.visibility = View.GONE
             }
             popbtn_rar.setOnClickListener {
+                popupWindow.dismiss()
                 displayItem.clear()
                 MyRepository.downloadedItem.clear()
                 MyRepository.downloadCount.value = 0
-                displayItem.addAll(test_infos.filter { file ->
-                    file.Type == RAR_STRING
+                displayItem.addAll(downloadFiles.filter { file ->
+                    getTypeFormat(file.type) == RAR_STRING
                 })
                 adapter = DownloadAdapter(displayItem)
                 download_fileList.adapter = adapter
@@ -124,16 +126,19 @@ class DownloadActivity : BaseActivity() {
         }
         download_edit.setOnClickListener {
             if (editStatus == EDIT_CLOSE) {
+                Log.d("TEXT_TTT", MyRepository.downloadCount.value.toString())
                 editStatus = EDIT_OPEN
                 download_bottom_edit.visibility = View.VISIBLE
-                item_check.visibility = View.VISIBLE
+                if (item_check != null)
+                    item_check.visibility = View.VISIBLE
                 adapter?.setEditMode(EDIT_OPEN)
                 download_fileList.adapter = adapter
             }
             else if (editStatus == EDIT_OPEN) {
                 editStatus = EDIT_CLOSE
                 download_bottom_edit.visibility = View.GONE
-                item_check.visibility = View.GONE
+                if (item_check != null)
+                    item_check.visibility = View.GONE
                 adapter?.setEditMode(EDIT_CLOSE)
                 MyRepository.downloadedItem.clear()
                 MyRepository.downloadCount.value = 0
@@ -142,7 +147,6 @@ class DownloadActivity : BaseActivity() {
         }
         download_edit_all.setOnClickListener {
             if (download_edit_all.text == "全选") {
-                Log.d("TEXT_TTT", displayItem.size.toString())
                 MyRepository.downloadedItemAddAll(displayItem)
                 adapter?.notifyDataSetChanged()
             }
@@ -151,32 +155,63 @@ class DownloadActivity : BaseActivity() {
                 adapter?.notifyDataSetChanged()
             }
         }
-    }
-
-    private fun flushList() {
-        downloadList.addAll(test_infos)
-        val adapter = DownloadAdapter(downloadList)
-        download_fileList.adapter = adapter
-        download_fileList.layoutManager = LinearLayoutManager(this)
-        MyRepository.downloadCount.observe(this, Observer { newCount ->
-            download_edit_count.text = newCount.toString()
-            if (newCount == adapter?.itemCount) {
-                download_edit_all.text = "取消全选"
-            }
-            else {
-                download_edit_all.text = "全选"
-            }
-        })
+        space_search_img.setOnClickListener {
+            val regex = Regex(space_search_edit.text.toString())
+            displayItem.clear()
+            MyRepository.downloadedItem.clear()
+            MyRepository.downloadCount.value = 0
+            displayItem.addAll(downloadFiles.filter { file ->
+                regex.containsMatchIn(file.filename)
+            })
+            adapter = DownloadAdapter(displayItem)
+            download_fileList.adapter = adapter
+            editStatus = EDIT_CLOSE
+            download_bottom_edit.visibility = View.GONE
+        }
+        download_edit_delete.setOnClickListener {
+            for (file in MyRepository.downloadedItem)
+                if (file.type != "wjj") {
+                    val tf = File(file.url)
+                    if (tf.delete()) {
+                        MyRepository.downloadListFlush.value = true
+                        Toast.makeText(this, "删除成功", Toast.LENGTH_SHORT).show()
+                    }
+                    else {
+                        Toast.makeText(this, "删除失败", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }
     }
 
     private fun initData() {
         displayItem.clear()
+        downloadFiles.clear()
         MyRepository.downloadedItem.clear()
         MyRepository.downloadCount.value = 0
-        displayItem.addAll(test_infos)
+        loadFileInformation()
+        displayItem.addAll(downloadFiles)
         adapter = DownloadAdapter(displayItem)
         download_fileList.adapter = adapter
         editStatus = EDIT_CLOSE
         download_bottom_edit.visibility = View.GONE
+    }
+
+    private fun loadFileInformation(){
+        val defaultDir = File(PanRepository.DOWNLOAD_PATH)
+        val files = defaultDir.listFiles()
+        for (file in files) {
+            val fileData = FileData(file.path, AccountRepository.user?.username?:"", file.name,
+                PanRepository.DOWNLOAD_PATH!!, getFileType(file.name), file.length().toDouble()/1024/1024, "")
+            downloadFiles.add(fileData)
+        }
+    }
+
+    private fun getFileType(filename: String): String {
+        val spt = filename.split('.')
+        return if (spt.size < 2) {
+            "wjj"
+        } else {
+            spt[1]
+        }
     }
  }

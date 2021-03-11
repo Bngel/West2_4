@@ -2,6 +2,7 @@ package com.example.panwest.WebService_Function
 
 import com.example.panwest.Data.FileData
 import com.example.panwest.Data.Json.*
+import com.example.panwest.Login_Function.AccountRepository
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
@@ -36,7 +37,7 @@ interface WebService {
     @POST("getPhoto")
     fun getUserPhoto(
         @Query("username") username: String):
-            Call<String>
+            Call<ResponseBody>
 
     @POST("getFileInformation")
     fun getFileInformation(
@@ -51,6 +52,8 @@ interface WebService {
         @Part("username") username: String,
         @Part("parentFile") parentFile: String):
             Call<UploadFileJson>
+        //@Header("token") token: String
+
 
     @POST("delete")
     fun deleteFile(
@@ -77,7 +80,35 @@ interface WebService {
         @Query("url") url: String):
             Call<ResponseBody>
 
+    @POST("changePassword")
+    fun changePassword(
+        @Query("username") username: String,
+        @Query("password") password: String,
+        @Query("newPassword") new_password: String,
+        @Query("yzm") check: String):
+            Call<PasswordChangeJson>
 
+    @POST("sendEmail")
+    fun getPasswordCheck(
+        @Query("username") username: String):
+            Call<PasswordCheckJson>
+
+    @POST("addFavor")
+    fun addFavor(
+        @Query("username") username: String,
+        @Query("url") url: String):
+            Call<AddFavorJson>
+
+    @POST("removeFavor")
+    fun removeFavor(
+        @Query("username") username: String,
+        @Query("url") url: String):
+            Call<RemoveFavorJson>
+
+    @POST("getFavor")
+    fun getFavor(
+        @Query("username") username: String):
+            Call<GetFavorJson>
 
     companion object Factory {
         fun create() : WebService {

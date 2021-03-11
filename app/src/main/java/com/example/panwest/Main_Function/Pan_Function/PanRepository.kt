@@ -14,6 +14,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.*
+import java.lang.Exception
 import java.net.SocketTimeoutException
 import java.util.*
 import kotlin.collections.ArrayList
@@ -64,7 +65,7 @@ object PanRepository {
             try {
                 val body = fileInfo.execute().body()
                 res = body.file_data_list
-            } catch (e: SocketTimeoutException) {
+            } catch (e: Exception) {
             }
         }.join(2000)
         flushCheck.value = true
@@ -72,6 +73,7 @@ object PanRepository {
     }
 
     fun uploadFile(context: Context, file: MultipartBody.Part, username: String, parentFile: String) {
+        //Log.d("ERROR_FILE",AccountRepository.token?:"")
         val upload = panService.uploadFile(file, username, parentFile)
         upload.enqueue(object : Callback<UploadFileJson> {
             override fun onResponse(
@@ -139,10 +141,6 @@ object PanRepository {
                 if (body != null) {
                     if (body.status == "success") {
                         Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show()
-                        AccountRepository.accountLogin(
-                            AccountRepository.user?.username ?: "",
-                            AccountRepository.user?.password ?: ""
-                        )
                         flushCheck.value = true
                     } else {
                         Toast.makeText(context, "删除失败", Toast.LENGTH_SHORT).show()
@@ -165,14 +163,9 @@ object PanRepository {
                 response: Response<CreatePackageJson>?
             ) {
                 val body = response?.body()
-                Log.d("TEXT_TTTT", body?.status.toString())
                 if (body != null) {
                     if (body.status == "success") {
                         Toast.makeText(context, "创建成功", Toast.LENGTH_SHORT).show()
-                        AccountRepository.accountLogin(
-                            AccountRepository.user?.username ?: "",
-                            AccountRepository.user?.password ?: ""
-                        )
                         flushCheck.value = true
                     } else {
                         Toast.makeText(context, "创建失败", Toast.LENGTH_SHORT).show()
@@ -193,7 +186,7 @@ object PanRepository {
             override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
                 val body = response?.body()
                 if (body != null) {
-                    writeResponseBodyToDisk(body, filename)
+                    writeResponseBodyToDisk(body, "$DOWNLOAD_PATH/$filename")
                     Toast.makeText(context, "下载成功", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -205,10 +198,10 @@ object PanRepository {
         })
     }
 
-    private fun writeResponseBodyToDisk(body: ResponseBody, filename: String): Boolean {
+    fun writeResponseBodyToDisk(body: ResponseBody, filepath: String): Boolean {
         return try {
             val futureStudioIconFile =
-                File("$DOWNLOAD_PATH/$filename")
+                File(filepath)
             var inputStream: InputStream? = null
             var outputStream: OutputStream? = null
             try {

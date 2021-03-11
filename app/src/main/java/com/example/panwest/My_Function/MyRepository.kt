@@ -1,43 +1,184 @@
 package com.example.panwest.My_Function
 
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import com.example.panwest.Data.FileData
+import com.example.panwest.Data.Json.AddFavorJson
+import com.example.panwest.Data.Json.RemoveFavorJson
 import com.example.panwest.Data.PanFile
+import com.example.panwest.Database.Database.AppDatabase
+import com.example.panwest.Database.Entity.StarEntity
+import com.example.panwest.Login_Function.AccountRepository
+import com.example.panwest.WebService_Function.WebService
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlin.concurrent.thread
 
 object MyRepository {
-
     /**
      * starActivity Part
      */
+    val MyService = WebService.create()
     val starCount = MutableLiveData(0)
-    val staredItem = ArrayList<PanFile>()
-    fun staredItemAdd(panFile: PanFile) {
-        staredItem.add(panFile)
+    val staredItem = ArrayList<FileData>()
+    val starListFlush = MutableLiveData<Boolean>(false)
+
+    private fun StarEntity_to_FileData(fileData: StarEntity): FileData{
+        return FileData(fileData.url, fileData.username, fileData.filename,
+            fileData.parent, fileData.type, fileData.sizes, fileData.date)
+    }
+
+    private fun FileData_to_StarEntity(fileData: FileData): StarEntity{
+        return StarEntity(0, fileData.url, fileData.username, fileData.filename,
+            fileData.parent, fileData.type, fileData.sizes, fileData.date)
+    }
+
+    fun getStarItems(context: Context): List<FileData> {
+        val favor = MyService.getFavor(AccountRepository.user?.username?:"")
+        val resList = ArrayList<FileData>()
+        thread {
+            try {
+                val body = favor.execute().body()
+                if (body != null && body.status == "success") {
+                    resList.addAll(body.starList)
+                    val dataDB = AppDatabase.getStarDatabase(context)
+                    thread {
+                        val dao = dataDB.starDao()
+                        dao.deleteAllStars()
+                        for (star in body.starList){
+                            dao.insertAllStars(FileData_to_StarEntity(star))
+                        }
+
+                    }
+                    Log.d("TEXT_TTT","加载收藏成功")
+                }
+                else {
+                    val starDB = AppDatabase.getStarDatabase(context).starDao()
+                    val starList = starDB.getAllStars()
+                    for (star in starList)
+                        resList.add(StarEntity_to_FileData(star))
+                    Log.d("TEXT_TTT","加载默认收藏")
+                }
+                starListFlush.value = true
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }.join(2000)
+        return resList
+    }
+
+    fun starItemSelect(starFile: FileData) {
+        staredItem.add(starFile)
         starCount.value = staredItem.size
     }
 
-    fun staredItemRemove(panFile: PanFile) {
-        staredItem.remove(panFile)
+    fun starItemSelectAll(starFiles: List<FileData>) {
+        for (starFile in starFiles) {
+            if (starFile !in staredItem)
+                staredItem.add(starFile)
+        }
         starCount.value = staredItem.size
     }
 
-    fun staredItemExists(panFile: PanFile) = panFile in staredItem
-
-    fun staredItemAddAll(panFiles: List<PanFile>) {
-        for (panFile in panFiles) {
-            if (!staredItemExists(panFile))
-                staredItemAdd(panFile)
-        }
+    fun starItemRemove(starFile: FileData) {
+        staredItem.remove(starFile)
+        starCount.value = staredItem.size
     }
 
-    fun staredItemRemoveAll(panFiles: List<PanFile>) {
-        for (panFile in panFiles) {
-            if (staredItemExists(panFile))
-                staredItemRemove(panFile)
+    fun starItemRemoveAll(starFiles: List<FileData>) {
+        for (starFile in starFiles) {
+            if (starFile in staredItem)
+                staredItem.remove(starFile)
         }
+        starCount.value = staredItem.size
+    }
+
+    fun staredItemAdd(context: Context, starFile: FileData) {
+        val starDB = AppDatabase.getStarDatabase(context).starDao()
+        val starFileEntity = FileData_to_StarEntity(starFile)
+        val starAdd = MyService.addFavor(AccountRepository.user?.username?:"", starFile.url)
+
+        starAdd.enqueue(object : Callback<AddFavorJson> {
+            override fun onResponse(call: Call<AddFavorJson>?, response: Response<AddFavorJson>?) {
+                val body = response?.body()
+                if (body != null && body.status == "success"){
+                    thread {
+                        starDB.insertAllStars(starFileEntity)
+                    }
+                    Toast.makeText(context, "添加收藏成功", Toast.LENGTH_SHORT).show()
+                    starListFlush.value = true
+                }
+                else {
+                    Toast.makeText(context, "添加收藏失败", Toast.LENGTH_SHORT).show()
+                }
+            }
+            override fun onFailure(call: Call<AddFavorJson>?, t: Throwable?) {
+                Toast.makeText(context, "添加收藏失败", Toast.LENGTH_SHORT).show()
+            }
+        })
+        starListFlush.value = true
+    }
+
+    fun staredItemDelete(context: Context, starFile: FileData) {
+        val starDB = AppDatabase.getStarDatabase(context).starDao()
+        val starFileEntity = FileData_to_StarEntity(starFile)
+        val starDelete = MyService.removeFavor(AccountRepository.user?.username?:"", starFile.url)
+
+        starDelete.enqueue(object : Callback<RemoveFavorJson> {
+            override fun onResponse(
+                call: Call<RemoveFavorJson>?,
+                response: Response<RemoveFavorJson>?
+            ) {
+                val body = response?.body()
+                if (body != null && body.status == "success"){
+                    thread {
+                        starDB.deleteStar(starFileEntity)
+                    }
+                    Toast.makeText(context, "删除收藏成功", Toast.LENGTH_SHORT).show()
+                    starListFlush.value = true
+                }
+                else {
+                    Toast.makeText(context, "删除收藏失败", Toast.LENGTH_SHORT).show()
+                }
+            }
+            override fun onFailure(call: Call<RemoveFavorJson>?, t: Throwable?) {
+                Toast.makeText(context, "删除收藏失败", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    fun staredItemAddAll(context: Context, starFiles: List<FileData>) {
+        val starDB = AppDatabase.getStarDatabase(context).starDao()
+        val starFileEntities = ArrayList<StarEntity>()
+        for (starFile in starFiles){
+            starFileEntities.add(FileData_to_StarEntity(starFile))
+        }
+        thread {
+            for (starFileEntity in starFileEntities) {
+                starDB.insertAllStars(starFileEntity)
+            }
+        }
+        starListFlush.value = true
+    }
+
+    fun staredItemDeleteAll(context: Context, starFiles: List<FileData>) {
+        val starDB = AppDatabase.getStarDatabase(context).starDao()
+        val starFileEntities = ArrayList<StarEntity>()
+        for (starFile in starFiles){
+            starFileEntities.add(FileData_to_StarEntity(starFile))
+        }
+        thread {
+            for (starFileEntity in starFileEntities)
+                starDB.deleteStar(starFileEntity)
+        }
+        starListFlush.value = true
     }
 
     /**
-     * starActivity Part
+     * shareActivity Part
      */
     val shareCount = MutableLiveData(0)
     val sharedItem = ArrayList<PanFile>()
@@ -71,30 +212,31 @@ object MyRepository {
      * downloadActivity Part
      */
     val downloadCount = MutableLiveData(0)
-    val downloadedItem = ArrayList<PanFile>()
-    fun downloadedItemAdd(panFile: PanFile) {
-        downloadedItem.add(panFile)
+    val downloadedItem = ArrayList<FileData>()
+    val downloadListFlush = MutableLiveData<Boolean>(false)
+    fun downloadedItemAdd(downloadFile: FileData) {
+        downloadedItem.add(downloadFile)
         downloadCount.value = downloadedItem.size
     }
 
-    fun downloadedItemRemove(panFile: PanFile) {
-        downloadedItem.remove(panFile)
+    fun downloadedItemRemove(downloadFile: FileData) {
+        downloadedItem.remove(downloadFile)
         downloadCount.value = downloadedItem.size
     }
 
-    fun downloadedItemExists(panFile: PanFile) = panFile in downloadedItem
+    fun downloadedItemExists(downloadFile: FileData) = downloadFile in downloadedItem
 
-    fun downloadedItemAddAll(panFiles: List<PanFile>) {
-        for (panFile in panFiles) {
-            if (!downloadedItemExists(panFile))
-                downloadedItemAdd(panFile)
+    fun downloadedItemAddAll(downloadFiles: List<FileData>) {
+        for (downloadFile in downloadFiles) {
+            if (!downloadedItemExists(downloadFile))
+                downloadedItemAdd(downloadFile)
         }
     }
 
-    fun downloadedItemRemoveAll(panFiles: List<PanFile>) {
-        for (panFile in panFiles) {
-            if (downloadedItemExists(panFile))
-                downloadedItemRemove(panFile)
+    fun downloadedItemRemoveAll(downloadFiles: List<FileData>) {
+        for (downloadFile in downloadFiles) {
+            if (downloadedItemExists(downloadFile))
+                downloadedItemRemove(downloadFile)
         }
     }
 

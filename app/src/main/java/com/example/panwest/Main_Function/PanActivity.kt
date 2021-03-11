@@ -182,14 +182,16 @@ class PanActivity : BaseActivity() {
                 Log.d("TEXT_TTT", PanRepository.selectedCount.value.toString())
                 editStatus = EDIT_OPEN
                 space_bottom_edit.visibility = View.VISIBLE
-                item_check.visibility = View.VISIBLE
+                if (item_check != null)
+                    item_check.visibility = View.VISIBLE
                 adapter?.setEditMode(EDIT_OPEN)
                 space_fileList.adapter = adapter
             }
             else if (editStatus == EDIT_OPEN) {
                 editStatus = EDIT_CLOSE
                 space_bottom_edit.visibility = View.GONE
-                item_check.visibility = View.GONE
+                if (item_check != null)
+                    item_check.visibility = View.GONE
                 adapter?.setEditMode(EDIT_CLOSE)
                 PanRepository.selectedItem.clear()
                 PanRepository.selectedCount.value = 0
@@ -222,6 +224,21 @@ class PanActivity : BaseActivity() {
         space_flush.setOnClickListener {
             initData(PanRepository.current_dir.value!!)
         }
+        space_edit_download.setOnClickListener {
+            for (file in PanRepository.selectedItem)
+                if (file.type != "wjj")
+                    PanRepository.downloadFile(this,
+                        AccountRepository.user?.username?:"",
+                        file.url,
+                        file.filename)
+        }
+        space_edit_delete.setOnClickListener {
+            for (file in PanRepository.selectedItem)
+                if (file.type != "wjj")
+                    PanRepository.deleteFile(this,
+                        AccountRepository.user?.username?:"",
+                        file.url)
+        }
     }
 
     private fun showInputDialog() {
@@ -239,8 +256,7 @@ class PanActivity : BaseActivity() {
                         this,
                         AccountRepository.user?.username ?: "",
                         package_name,
-                        PanRepository.current_dir.value!!
-                    )
+                        PanRepository.current_dir.value!!)
                 }
                 else {
                     Toast.makeText(this, "文件夹名称不得为空", Toast.LENGTH_SHORT).show()

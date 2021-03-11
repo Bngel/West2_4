@@ -18,3 +18,6 @@
 
 ## RecyclerView 多选
 - https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView.Adapter#onBindViewHolder(VH,%20int,%20java.util.List%3Cjava.lang.Object%3E)
+
+## 下载功能参考
+- https://blog.csdn.net/lkx94/article/details/52918900

@@ -9,13 +9,17 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
 import androidx.recyclerview.widget.RecyclerView
-import com.example.panwest.Data.PanFile
+import com.example.panwest.Data.FileData
+import com.example.panwest.Data.getTypeFormat
+import com.example.panwest.Login_Function.AccountRepository
+import com.example.panwest.Main_Function.Pan_Function.PanRepository
+import com.example.panwest.My_Function.MyRepository
+import com.example.panwest.My_Function.MyRepository.starItemRemove
+import com.example.panwest.My_Function.MyRepository.starItemSelect
 import com.example.panwest.My_Function.MyRepository.staredItemAdd
-import com.example.panwest.My_Function.MyRepository.staredItemExists
-import com.example.panwest.My_Function.MyRepository.staredItemRemove
 import com.example.panwest.R
 
-class StarAdapter(private val files: List<PanFile>): RecyclerView.Adapter<StarAdapter.ViewHolder>() {
+class StarAdapter(private val files: ArrayList<FileData>): RecyclerView.Adapter<StarAdapter.ViewHolder>() {
     private var editMode = false
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -35,12 +39,11 @@ class StarAdapter(private val files: List<PanFile>): RecyclerView.Adapter<StarAd
                 if (!viewHolder.fileSelected) {
                     viewHolder.fileCheck.setImageResource(R.drawable.space_checked)
                     viewHolder.fileSelected = !viewHolder.fileSelected
-                    staredItemAdd(files[viewHolder.adapterPosition])
-
+                    starItemSelect(files[viewHolder.adapterPosition])
                 } else {
                     viewHolder.fileCheck.setImageResource(R.drawable.space_unchecked)
                     viewHolder.fileSelected = !viewHolder.fileSelected
-                    staredItemRemove(files[viewHolder.adapterPosition])
+                    starItemRemove(files[viewHolder.adapterPosition])
                 }
             } else {
                 val popupView = LayoutInflater.from(parent.context).inflate(
@@ -57,10 +60,15 @@ class StarAdapter(private val files: List<PanFile>): RecyclerView.Adapter<StarAd
                 val popbtn_delete = popupView.findViewById<Button>(R.id.star_click_popbutton_delete)
 
                 popbtn_download.setOnClickListener {
-
+                    popupWindow.dismiss()
+                    PanRepository.downloadFile(parent.context,
+                        AccountRepository.user?.username?:"",
+                        files[viewHolder.adapterPosition].url,
+                        files[viewHolder.adapterPosition].filename)
                 }
                 popbtn_delete.setOnClickListener {
-
+                    popupWindow.dismiss()
+                    MyRepository.staredItemDelete(parent.context, files[viewHolder.adapterPosition])
                 }
             }
         }
@@ -70,11 +78,26 @@ class StarAdapter(private val files: List<PanFile>): RecyclerView.Adapter<StarAd
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val file = files[position]
-        holder.fileImg.setImageResource(file.TypeImg)
-        holder.fileName.text = file.fileName
+        val MUSIC_STRING = "MUSIC"
+        val MOVIE_STRING = "MOVIE"
+        val PHOTO_STRING = "PHOTO"
+        val FILE_STRING = "FILE"
+        val RAR_STRING = "RAR"
+        val PACKAGE_STRING = "WJJ"
+        holder.fileImg.setImageResource(
+            when(getTypeFormat(file.type)) {
+                MUSIC_STRING -> R.drawable.type_music
+                MOVIE_STRING -> R.drawable.type_movie
+                PHOTO_STRING -> R.drawable.type_photo
+                RAR_STRING -> R.drawable.type_rar
+                PACKAGE_STRING -> R.drawable.type_dir
+                else -> R.drawable.type_file
+            }
+        )
+        holder.fileName.text = file.filename
         if (editMode) {
             holder.fileCheck.visibility = View.VISIBLE
-            holder.fileSelected = staredItemExists(file)
+            holder.fileSelected = file in MyRepository.staredItem
             if (holder.fileSelected) {
                 holder.fileCheck.setImageResource(R.drawable.space_checked)
             } else {

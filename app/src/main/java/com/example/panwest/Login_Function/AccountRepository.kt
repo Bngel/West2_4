@@ -1,12 +1,27 @@
 package com.example.panwest.Login_Function
 
+import android.content.Context
 import android.util.Log
+import android.widget.ImageView
+import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.panwest.Data.Json.LoginJson
+import com.example.panwest.Data.Json.PasswordCheckJson
 import com.example.panwest.Data.Json.PhotoJson
 import com.example.panwest.Data.Json.RegisterJson
 import com.example.panwest.Data.User
+import com.example.panwest.Main_Function.Pan_Function.PanRepository
+import com.example.panwest.R
 import com.example.panwest.WebService_Function.WebService
+import com.example.panwest.WidgetSetting
+import kotlinx.android.synthetic.main.view_meform_main.*
+import retrofit2.Callback
 import okhttp3.MultipartBody
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Response
+import java.io.File
 import java.net.SocketTimeoutException
 import kotlin.concurrent.thread
 
@@ -15,22 +30,26 @@ object AccountRepository {
 
     var user: User? = null
     var status: Boolean? = null
+    var token: String? = null
     private val accountService = WebService.create()
+    var PORTRAIT_PATH :String? = null
 
     fun accountLogin(account: String, pswd: String){
-        val login = accountService.userLogin(account, pswd)
+        val login = accountService.userLogin(account, WidgetSetting.getMD5(pswd))
         thread {
             try {
                 val body = login.execute().body()
                 user = body.user
                 status = body.status
+                token = body.token
             } catch (e: SocketTimeoutException) {
             }
-        }.join(2000)
+        }.join(4000)
     }
 
     fun accountRegister(account: String, pswd: String, email: String): RegisterJson? {
-        val user = User(account, pswd, email, "", 1024.0)
+        Log.d("TEXT_TTT", WidgetSetting.getMD5(pswd))
+        val user = User(account, WidgetSetting.getMD5(pswd), email, "", 1024.0)
         val login = accountService.userRegister(user.username, user.password, user.email)
         var res: RegisterJson? = null
         thread {
@@ -58,17 +77,93 @@ object AccountRepository {
         return res
     }
 
-    fun accountGetPhoto(username: String): String? {
+    fun accountGetPhoto(context: Context, username: String, portrait_pic: ImageView) {
         var res: String? = null
-        val upload = accountService.getUserPhoto(username)
+        val PORTRAIT = "portrait.png"
+        val filepath = "$PORTRAIT_PATH/${username+PORTRAIT}"
+        val photo = accountService.getUserPhoto(username)
+        photo.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
+                val body = response?.body()
+                if (body != null) {
+                    makeDir(PORTRAIT_PATH!!)
+                    PanRepository.writeResponseBodyToDisk(body, filepath)
+                    Glide.with(context)
+                        .load(filepath)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .placeholder(R.drawable.me_loading) // 占位图设置：加载过程中显示的图片
+                        .error(R.drawable.me_error) // 异常占位图
+                        .centerCrop()
+                        .into(portrait_pic)
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>?, t: Throwable?) {
+                Toast.makeText(context, "头像更新失败", Toast.LENGTH_SHORT).show()
+                val portrait = File(filepath)
+                if (portrait.exists()){
+                    Glide.with(context)
+                        .load(filepath)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .placeholder(R.drawable.me_loading) // 占位图设置：加载过程中显示的图片
+                        .error(R.drawable.me_error) // 异常占位图
+                        .centerCrop()
+                        .into(portrait_pic)
+                }
+            }
+        })
+    }
+
+    private fun makeDir(dir: String){
+        // I/O logic
+        val sciezka = File(dir)
+        if (sciezka.mkdirs()) {
+            Log.d("TEXT_TTT", dir)
+        }
+        else {
+            Log.d("TEXT_TTT", "existed")
+        }
+    }
+
+    fun accountPasswordChangeCheck(context: Context, username: String) {
+        val check = accountService.getPasswordCheck(username)
+        check.enqueue(object : Callback<PasswordCheckJson> {
+            override fun onResponse(
+                call: Call<PasswordCheckJson>?,
+                response: Response<PasswordCheckJson>?
+            ) {
+                val body = response?.body()
+                if(body != null) {
+                    if (body.status == "success") {
+                        Toast.makeText(context, "发送成功", Toast.LENGTH_SHORT).show()
+                    }
+                    else {
+                        Toast.makeText(context, "发送失败", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<PasswordCheckJson>?, t: Throwable?) {
+                Toast.makeText(context, "发送失败", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    fun accountPasswordChange(context: Context, username: String, password: String, newPassword: String, check: String): Boolean {
+        var success = false
+        val change = accountService.changePassword(username, WidgetSetting.getMD5(password), WidgetSetting.getMD5(newPassword), check)
         thread {
             try{
-            val body = upload.execute().body()
-            Log.d("TEXT_TTT", body!!)
-            res = body
+                val body = change.execute().body()
+                Log.d("TEXT_TTT", "password_change " + body.status)
+                if(body != null) {
+                    if (body.status == "success") {
+                        success = true
+                    }
+                }
             } catch (e: SocketTimeoutException) {
             }
-        }.join(2000)
-        return res
+        }.join(3000)
+        return success
     }
 }

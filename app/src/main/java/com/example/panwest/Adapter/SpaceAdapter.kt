@@ -15,9 +15,12 @@ import com.example.panwest.R
 import com.example.panwest.Data.PanFile
 import com.example.panwest.Data.getFileFormat
 import com.example.panwest.Data.getTypeFormat
+import com.example.panwest.Database.Database.AppDatabase
 import com.example.panwest.Login_Function.AccountRepository
 import com.example.panwest.Main_Function.Pan_Function.PanRepository
+import com.example.panwest.My_Function.MyRepository
 import com.example.panwest.WebService_Function.WebService
+import kotlin.concurrent.thread
 
 class SpaceAdapter(private val files: List<FileData>): RecyclerView.Adapter<SpaceAdapter.ViewHolder>(){
     private var editMode = false
@@ -58,6 +61,7 @@ class SpaceAdapter(private val files: List<FileData>): RecyclerView.Adapter<Spac
                     val popbtn_open = popupView.findViewById<Button>(R.id.click_popbutton_open_package)
                     val popbtn_delete = popupView.findViewById<Button>(R.id.click_popbutton_delete_package)
 
+
                     popbtn_open.setOnClickListener {
                         popupWindow.dismiss()
                         PanRepository.parent_dir.push(PanRepository.current_dir.value)
@@ -65,11 +69,11 @@ class SpaceAdapter(private val files: List<FileData>): RecyclerView.Adapter<Spac
                     }
                     popbtn_delete.setOnClickListener {
                         popupWindow.dismiss()
-                        Log.d("TEXT_TTT",files[viewHolder.adapterPosition].url)
                         PanRepository.deletePackage(parent.context,
                             AccountRepository.user?.username?:"",
                             files[viewHolder.adapterPosition].url)
                     }
+
                 }
                 else {
                     val popupView = LayoutInflater.from(parent.context).inflate(R.layout.item_pop_click,
@@ -80,6 +84,7 @@ class SpaceAdapter(private val files: List<FileData>): RecyclerView.Adapter<Spac
 
                     val popbtn_download = popupView.findViewById<Button>(R.id.click_popbutton_download)
                     val popbtn_delete = popupView.findViewById<Button>(R.id.click_popbutton_delete)
+                    val popbtn_star = popupView.findViewById<Button>(R.id.click_popbutton_star)
 
                     popbtn_download.setOnClickListener {
                         popupWindow.dismiss()
@@ -93,6 +98,10 @@ class SpaceAdapter(private val files: List<FileData>): RecyclerView.Adapter<Spac
                         PanRepository.deleteFile(parent.context,
                             AccountRepository.user?.username?:"",
                             files[viewHolder.adapterPosition].url)
+                    }
+                    popbtn_star.setOnClickListener {
+                        popupWindow.dismiss()
+                        MyRepository.staredItemAdd(parent.context, files[viewHolder.adapterPosition])
                     }
                 }
             }

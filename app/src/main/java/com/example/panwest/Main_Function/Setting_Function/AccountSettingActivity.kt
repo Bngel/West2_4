@@ -21,6 +21,7 @@ class AccountSettingActivity : BaseActivity() {
     private val LOGIN_STATE = "login_state"
     private val SWITCH_ACTIVITY = 0X01
     private val LOGOUT_ACTIVITY = 0X02
+    private val PASSWORD_ACTIVITY = 0X03
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,8 +50,15 @@ class AccountSettingActivity : BaseActivity() {
             val loginIntent = Intent(this, LoginActivity::class.java)
             startActivityForResult(loginIntent, LOGOUT_ACTIVITY)
         }
+
+        account_setting_item_change_password.setOnClickListener {
+            finish()
+            val passwordIntent = Intent(this, PasswordChangeActivity::class.java)
+            startActivityForResult(passwordIntent, PASSWORD_ACTIVITY)
+        }
     }
 
+    @SuppressLint("CommitPrefEdits")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {

@@ -5,8 +5,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "star")
-data class StarEntity(@PrimaryKey @ColumnInfo(name = "id") val id: Int,
-                      @ColumnInfo(name = "type") val Type: String?,
-                      @ColumnInfo(name = "img") val TypeImg: Int?,
-                      @ColumnInfo(name = "file_name") val fileName: String?,
-                      @ColumnInfo(name = "file_url") val fileUrl: String?)
+data class StarEntity(@PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Int,
+                      @ColumnInfo(name = "url") val url: String,
+                      @ColumnInfo(name = "username") val username: String,
+                      @ColumnInfo(name = "filename") val filename: String,
+                      @ColumnInfo(name = "parent") val parent: String,
+                      @ColumnInfo(name = "type") val type: String,
+                      @ColumnInfo(name = "sizes") val sizes: Double,
+                      @ColumnInfo(name = "date") val date: String)

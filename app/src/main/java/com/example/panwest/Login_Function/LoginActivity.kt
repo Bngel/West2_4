@@ -12,6 +12,7 @@ import android.widget.Toast
 import com.example.panwest.BaseActivity
 import com.example.panwest.MainActivity
 import com.example.panwest.R
+import com.example.panwest.WidgetSetting
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : BaseActivity() {

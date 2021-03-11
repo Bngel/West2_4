@@ -18,18 +18,16 @@ import androidx.core.content.ContextCompat
 import butterknife.ButterKnife
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.example.panwest.My_Function.DeleteActivity
 
 import com.example.panwest.Data.User
+import com.example.panwest.Database.Database.AppDatabase
 import com.example.panwest.Login_Function.AccountRepository
 import com.example.panwest.Login_Function.LoginActivity
 import com.example.panwest.Main_Function.MoreActivity
 import com.example.panwest.Main_Function.PanActivity
 import com.example.panwest.Main_Function.Pan_Function.PanRepository
 import com.example.panwest.Main_Function.SettingActivity
-import com.example.panwest.My_Function.DownloadActivity
-import com.example.panwest.My_Function.ShareActivity
-import com.example.panwest.My_Function.StarActivity
+import com.example.panwest.My_Function.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_meform_main.*
 import kotlinx.android.synthetic.main.view_my_main.*
@@ -68,6 +66,7 @@ class MainActivity : BaseActivity() {
         requestStoragePermission();
         setClickEvent()
         PanRepository.DOWNLOAD_PATH = applicationContext.filesDir.absolutePath + "/PanWestDownload"
+        AccountRepository.PORTRAIT_PATH = applicationContext.filesDir.absolutePath + "/PortraitPic"
         makeDir(PanRepository.DOWNLOAD_PATH!!)
         if (intent.getBooleanExtra("switch_success", false))
             ActivityCollector.onlyActivity(this)
@@ -101,10 +100,9 @@ class MainActivity : BaseActivity() {
         if (userState) {
             val userName = userAccount.first!!
             val userPassword = userAccount.second!!
-            AccountRepository.accountGetPhoto(userName)
+            //AccountRepository.accountGetPhoto(userName)
             if (userPassword != "" && userName != "") {
                 val loginStatus = AccountRepository.accountLogin(userName, userPassword)
-                AccountRepository.accountGetPhoto(userName)
                 if (AccountRepository.user != null && AccountRepository.status != null && AccountRepository.status!!) {
                     defaultLoad(AccountRepository.user!!)
                 }
@@ -123,8 +121,16 @@ class MainActivity : BaseActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun defaultLoad(user: User) {
-        me_userName.text = user.username
-        me_userSpace.text = "%.2fMB/1024MB".format(1024.0 - user.space)
+        try {
+            if (user != null) {
+                me_userName.text = user.username
+                me_userSpace.text = "%.2fMB/1024MB".format(1024.0 - user.space)
+                AccountRepository.accountGetPhoto(this, user.username, me_portraitImage)
+            }
+        } catch (e: Exception){
+            e.printStackTrace()
+        }
+
     }
 
     private fun setClickEvent() {
@@ -205,7 +211,18 @@ class MainActivity : BaseActivity() {
                 }
             }
             SPACE_ACTIVITY -> {
-                defaultLoad(AccountRepository.user!!)
+                try {
+                    defaultLoad(AccountRepository.user!!)
+                } catch (e: Exception) {
+
+                }
+            }
+            SETTING_ACTIVITY -> {
+                try {
+                    defaultLoad(AccountRepository.user!!)
+                } catch (e: Exception) {
+
+                }
             }
         }
     }

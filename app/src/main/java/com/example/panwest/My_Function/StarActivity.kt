@@ -5,16 +5,21 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.PopupWindow
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.panwest.Adapter.MyAdapter.StarAdapter
 import com.example.panwest.BaseActivity
-import com.example.panwest.Data.PanFile
+import com.example.panwest.Data.FileData
+import com.example.panwest.Data.getTypeFormat
+import com.example.panwest.Database.Database.AppDatabase
+import com.example.panwest.Login_Function.AccountRepository
 import com.example.panwest.R
 import kotlinx.android.synthetic.main.activity_star.*
-import kotlinx.android.synthetic.main.activity_star.*
 import kotlinx.android.synthetic.main.item_file.*
+import kotlinx.android.synthetic.main.view_search_space.*
+import kotlin.concurrent.thread
 
 class StarActivity : BaseActivity() {
     private val MUSIC_STRING = "MUSIC"
@@ -25,27 +30,22 @@ class StarActivity : BaseActivity() {
     private val EDIT_OPEN = true
     private val EDIT_CLOSE = false
     private var adapter : StarAdapter?  = null
-    private val displayItem = ArrayList<PanFile>()
-
-    val test_infos = listOf(
-        PanFile("PHOTO", R.drawable.type_photo, "img1.png", "testUrl"),
-        PanFile("PHOTO", R.drawable.type_photo, "img2.png", "testUrl"),
-        PanFile("PHOTO", R.drawable.type_photo, "img3.png", "testUrl"),
-        PanFile("PHOTO", R.drawable.type_photo, "img4.png", "testUrl"),
-        PanFile("MUSIC", R.drawable.type_music, "music1.mp3", "testUrl"),
-        PanFile("MUSIC", R.drawable.type_music, "music2.mp3", "testUrl"),
-        PanFile("MUSIC", R.drawable.type_music, "music3.mp3", "testUrl"),
-        PanFile("MOVIE", R.drawable.type_movie, "movie1.mp4", "testUrl"),
-        PanFile("RAR", R.drawable.type_rar, "rar1.zip", "testUrl"),
-        PanFile("FILE", R.drawable.type_file, "sb.ppp", "testUrl")
-    )
+    private val starFiles = ArrayList<FileData>()
+    private val displayItem = ArrayList<FileData>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_star)
-        flushList()
         initData()
+        star_fileList.layoutManager = LinearLayoutManager(this)
+        star_fileList.adapter = adapter
         setClickEvent()
+        MyRepository.starListFlush.observe(this, Observer { flush ->
+            if (flush) {
+                initData()
+                MyRepository.starListFlush.value = false
+            }
+        })
     }
 
     private fun setClickEvent() {
@@ -71,8 +71,8 @@ class StarActivity : BaseActivity() {
                 displayItem.clear()
                 MyRepository.staredItem.clear()
                 MyRepository.starCount.value = 0
-                displayItem.addAll(test_infos.filter { file ->
-                    file.Type == PHOTO_STRING
+                displayItem.addAll(starFiles.filter { file ->
+                    getTypeFormat(file.type) == PHOTO_STRING
                 })
                 adapter = StarAdapter(displayItem)
                 star_fileList.adapter = adapter
@@ -84,21 +84,22 @@ class StarActivity : BaseActivity() {
                 displayItem.clear()
                 MyRepository.staredItem.clear()
                 MyRepository.starCount.value = 0
-                displayItem.addAll(test_infos.filter { file ->
-                    file.Type == MOVIE_STRING
+                displayItem.addAll(starFiles.filter { file ->
+                    getTypeFormat(file.type) == MOVIE_STRING
                 })
                 adapter = StarAdapter(displayItem)
                 star_fileList.adapter = adapter
                 editStatus = EDIT_CLOSE
                 star_bottom_edit.visibility = View.GONE
+
             }
             popbtn_music.setOnClickListener {
                 popupWindow.dismiss()
                 displayItem.clear()
                 MyRepository.staredItem.clear()
                 MyRepository.starCount.value = 0
-                displayItem.addAll(test_infos.filter { file ->
-                    file.Type == MUSIC_STRING
+                displayItem.addAll(starFiles.filter { file ->
+                    getTypeFormat(file.type) == MUSIC_STRING
                 })
                 adapter = StarAdapter(displayItem)
                 star_fileList.adapter = adapter
@@ -106,11 +107,12 @@ class StarActivity : BaseActivity() {
                 star_bottom_edit.visibility = View.GONE
             }
             popbtn_rar.setOnClickListener {
+                popupWindow.dismiss()
                 displayItem.clear()
                 MyRepository.staredItem.clear()
                 MyRepository.starCount.value = 0
-                displayItem.addAll(test_infos.filter { file ->
-                    file.Type == RAR_STRING
+                displayItem.addAll(starFiles.filter { file ->
+                    getTypeFormat(file.type) == RAR_STRING
                 })
                 adapter = StarAdapter(displayItem)
                 star_fileList.adapter = adapter
@@ -124,16 +126,19 @@ class StarActivity : BaseActivity() {
         }
         star_edit.setOnClickListener {
             if (editStatus == EDIT_CLOSE) {
+                Log.d("TEXT_TTT", MyRepository.starCount.value.toString())
                 editStatus = EDIT_OPEN
                 star_bottom_edit.visibility = View.VISIBLE
-                item_check.visibility = View.VISIBLE
+                if (item_check != null)
+                    item_check.visibility = View.VISIBLE
                 adapter?.setEditMode(EDIT_OPEN)
                 star_fileList.adapter = adapter
             }
             else if (editStatus == EDIT_OPEN) {
                 editStatus = EDIT_CLOSE
                 star_bottom_edit.visibility = View.GONE
-                item_check.visibility = View.GONE
+                if (item_check != null)
+                    item_check.visibility = View.GONE
                 adapter?.setEditMode(EDIT_CLOSE)
                 MyRepository.staredItem.clear()
                 MyRepository.starCount.value = 0
@@ -142,41 +147,45 @@ class StarActivity : BaseActivity() {
         }
         star_edit_all.setOnClickListener {
             if (star_edit_all.text == "全选") {
-                Log.d("TEXT_TTT", displayItem.size.toString())
-                MyRepository.staredItemAddAll(displayItem)
+                MyRepository.starItemSelectAll(displayItem)
                 adapter?.notifyDataSetChanged()
             }
             else {
-                MyRepository.staredItemRemoveAll(displayItem)
+                MyRepository.starItemRemoveAll(displayItem)
                 adapter?.notifyDataSetChanged()
             }
         }
-    }
-
-    private fun flushList() {
-        starList.addAll(test_infos)
-        val adapter = StarAdapter(starList)
-        star_fileList.adapter = adapter
-        star_fileList.layoutManager = LinearLayoutManager(this)
-        MyRepository.starCount.observe(this, Observer { newCount ->
-            star_edit_count.text = newCount.toString()
-            if (newCount == adapter?.itemCount) {
-                star_edit_all.text = "取消全选"
-            }
-            else {
-                star_edit_all.text = "全选"
-            }
-        })
+        space_search_img.setOnClickListener {
+            val regex = Regex(space_search_edit.text.toString())
+            displayItem.clear()
+            MyRepository.staredItem.clear()
+            MyRepository.starCount.value = 0
+            displayItem.addAll(starFiles.filter { file ->
+                regex.containsMatchIn(file.filename)
+            })
+            adapter = StarAdapter(displayItem)
+            star_fileList.adapter = adapter
+            editStatus = EDIT_CLOSE
+            star_bottom_edit.visibility = View.GONE
+        }
     }
 
     private fun initData() {
         displayItem.clear()
+        starFiles.clear()
         MyRepository.staredItem.clear()
         MyRepository.starCount.value = 0
-        displayItem.addAll(test_infos)
+        loadFileInformation()
+        displayItem.addAll(starFiles)
         adapter = StarAdapter(displayItem)
         star_fileList.adapter = adapter
         editStatus = EDIT_CLOSE
         star_bottom_edit.visibility = View.GONE
+    }
+
+    private fun loadFileInformation(){
+        val star_list = MyRepository.getStarItems(this)
+        Log.d("star_size", star_list.size.toString())
+        starFiles.addAll(star_list)
     }
 }
