@@ -1,5 +1,6 @@
 package com.example.panwest.Adapter.MyAdapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +15,6 @@ import com.example.panwest.Data.photoFormat
 import com.example.panwest.My_Function.MyRepository
 import com.example.panwest.R
 import kotlinx.android.synthetic.main.item_pop_pic.view.*
-import kotlinx.android.synthetic.main.view_meform_main.*
 import java.io.File
 
 class DownloadAdapter(private val files: List<FileData>): RecyclerView.Adapter<DownloadAdapter.ViewHolder>() {
@@ -65,12 +65,13 @@ class DownloadAdapter(private val files: List<FileData>): RecyclerView.Adapter<D
                             R.layout.item_pop_pic,
                             parent, false
                         )
+                        val loading = File(pic.url)
                         Glide.with(parent.context)
-                            .load(pic.url)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .load(loading)
+                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                             .placeholder(R.drawable.me_loading) // 占位图设置：加载过程中显示的图片
                             .error(R.drawable.me_error) // 异常占位图
-                            .centerCrop()
+                            .fitCenter()
                             .into(picView.pic_show_img)
                         val picWindow = PopupWindow(
                             picView, ActionBar.LayoutParams.MATCH_PARENT,

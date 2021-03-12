@@ -39,6 +39,20 @@
         android:layout_gravity="right"/>
 
     <Button
+        android:id="@+id/click_popbutton_rename"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/string_rename"
+        android:textColor="@android:color/black"
+        android:padding="15dp"
+        android:background="@android:color/transparent"/>
+    <ImageView
+        android:layout_width="130dp"
+        android:layout_height="1dp"
+        android:background="@color/colorSky"
+        android:layout_gravity="right"/>
+
+    <Button
         android:id="@+id/click_popbutton_delete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

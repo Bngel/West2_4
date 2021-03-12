@@ -314,14 +314,8 @@ class MainActivity : BaseActivity() {
                 .error(R.drawable.me_error) // 异常占位图
                 .centerCrop()
                 .into(me_portraitImage)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
-
-/*val file = File(imageUri.toString())
-val fileRQ = RequestBody.create(MediaType.parse("image/*"), file)
-val part = MultipartBody.Part.createFormData("photo", file.name, fileRQ)
-val result = AccountRepository.accountPhoto(part, me_userName.text.toString())
-Log.d("TAG", result!!)*/
+}

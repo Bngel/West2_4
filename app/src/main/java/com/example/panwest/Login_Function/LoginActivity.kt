@@ -16,9 +16,10 @@ import com.example.panwest.WidgetSetting
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : BaseActivity() {
-    private val REGISTER_ACTIVITY = 1
+    private val REGISTER_ACTIVITY = 0X01
+    private val FIND_ACTIVITY = 0X02
     private val LOGIN_STATE = "login_state"
-    private val LOGIN_FAIL_RESULT = "用户名或密码错误"
+    private val LOGIN_FAIL_RESULT = "登录失败"
     private val LOGIN_SUCCESS_RESULT = "登录成功"
 
     @SuppressLint("CommitPrefEdits")
@@ -29,6 +30,11 @@ class LoginActivity : BaseActivity() {
         login_pan_register.setOnClickListener {
             val registerIntent = Intent(this, RegisterActivity::class.java)
             startActivityForResult(registerIntent, REGISTER_ACTIVITY)
+        }
+
+        login_pan_find.setOnClickListener {
+            val findIntent = Intent(this, FindPasswordActivity::class.java)
+            startActivityForResult(findIntent, REGISTER_ACTIVITY)
         }
 
         pan_login_btn.setOnClickListener {
@@ -59,6 +65,12 @@ class LoginActivity : BaseActivity() {
         if (resultCode == Activity.RESULT_OK) {
             when(requestCode) {
                 REGISTER_ACTIVITY -> {
+                    val username = data?.getStringExtra("userAccount")
+                    val userpassword = data?.getStringExtra("userPassword")
+                    login_pan_id.setText(username)
+                    login_pan_pswd.setText(userpassword)
+                }
+                FIND_ACTIVITY -> {
                     val username = data?.getStringExtra("userAccount")
                     val userpassword = data?.getStringExtra("userPassword")
                     login_pan_id.setText(username)

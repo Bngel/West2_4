@@ -36,13 +36,15 @@ interface WebService {
 
     @POST("getPhoto")
     fun getUserPhoto(
-        @Query("username") username: String):
+        @Query("username") username: String,
+        @Header("token") token: String):
             Call<ResponseBody>
 
     @POST("getFileInformation")
     fun getFileInformation(
         @Query("username") username: String,
-        @Query("parentFile") parentFile: String):
+        @Query("parentFile") parentFile: String,
+        @Header("token") token: String):
             Call<LoadFilesJson>
 
     @Multipart
@@ -58,26 +60,30 @@ interface WebService {
     @POST("delete")
     fun deleteFile(
         @Query("username") username: String,
-        @Query("url") url: String):
+        @Query("url") url: String,
+        @Header("token") token: String):
             Call<DeleteFileJson>
 
     @POST("deleteFile")
     fun deletePackage(
         @Query("username") username: String,
-        @Query("url") url: String):
+        @Query("url") url: String,
+        @Header("token") token: String):
             Call<DeletePackageJson>
 
     @POST("createNewFile")
     fun createPackage(
         @Query("username") username: String,
         @Query("Filename") package_name: String,
-        @Query("parentFile") parentFile: String):
+        @Query("parentFile") parentFile: String,
+        @Header("token") token: String):
             Call<CreatePackageJson>
 
     @POST("download")
     fun downloadFile(
         @Query("username") username: String,
-        @Query("url") url: String):
+        @Query("url") url: String,
+        @Header("token") token: String):
             Call<ResponseBody>
 
     @POST("changePassword")
@@ -85,30 +91,57 @@ interface WebService {
         @Query("username") username: String,
         @Query("password") password: String,
         @Query("newPassword") new_password: String,
-        @Query("yzm") check: String):
+        @Query("yzm") check: String,
+        @Header("token") token: String):
             Call<PasswordChangeJson>
 
     @POST("sendEmail")
     fun getPasswordCheck(
-        @Query("username") username: String):
+        @Query("username") username: String,
+        @Query("type") type: String):
             Call<PasswordCheckJson>
 
     @POST("addFavor")
     fun addFavor(
         @Query("username") username: String,
-        @Query("url") url: String):
+        @Query("url") url: String,
+        @Header("token") token: String):
             Call<AddFavorJson>
 
     @POST("removeFavor")
     fun removeFavor(
         @Query("username") username: String,
-        @Query("url") url: String):
+        @Query("url") url: String,
+        @Header("token") token: String):
             Call<RemoveFavorJson>
 
     @POST("getFavor")
     fun getFavor(
-        @Query("username") username: String):
+        @Query("username") username: String,
+        @Header("token") token: String):
             Call<GetFavorJson>
+
+    @POST("getFeedback")
+    fun getFeedback(
+        @Query("username") username: String,
+        @Query("feedback") feedback: String,
+        @Header("token") token: String):
+            Call<FeedbackJson>
+
+    @POST("changeFilename")
+    fun changeFilename(
+        @Query("username") username: String,
+        @Query("newFilename") newFilename: String,
+        @Query("url") url: String,
+        @Header("token") token: String):
+            Call<ChangeFileNameJson>
+
+    @POST("findPassword")
+    fun findPassword(
+        @Query("username") username: String,
+        @Query("newPassword") newPassword: String,
+        @Query("yzm") check: String):
+            Call<FindPasswordJson>
 
     companion object Factory {
         fun create() : WebService {

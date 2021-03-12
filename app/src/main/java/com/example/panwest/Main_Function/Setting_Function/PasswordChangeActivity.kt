@@ -32,6 +32,7 @@ class PasswordChangeActivity : AppCompatActivity() {
     @SuppressLint("CommitPrefEdits")
     private fun setClickEvent() {
         password_pan_change_btn.setOnClickListener {
+            val userNowPassword = password_pan_pswd_now.text.toString()
             val userPassword = password_pan_pswd.text.toString()
             val userPswdCheck = password_pan_pswd_again.text.toString()
             val userCheck = password_pan_pswd_check.text.toString()
@@ -41,7 +42,7 @@ class PasswordChangeActivity : AppCompatActivity() {
             }
             else {
                 val success = AccountRepository.accountPasswordChange(this, defaultUser?.username?:"",
-                    defaultUser?.password?:"", userPassword, userCheck)
+                    userNowPassword, userPassword, userCheck)
                 if(success) {
                     Toast.makeText(this, "修改成功, 请重新登录", Toast.LENGTH_SHORT).show()
                     Log.d("TEXT_TTTTT", "修改密码成功")
@@ -61,7 +62,9 @@ class PasswordChangeActivity : AppCompatActivity() {
             }
         }
         password_pan_check_btn.setOnClickListener {
-            AccountRepository.accountPasswordChangeCheck(this, AccountRepository.user?.username?:"")
+            AccountRepository.accountPasswordChangeCheck(this,
+                AccountRepository.user?.username?:"",
+                "changePassword")
         }
     }
 }

@@ -37,7 +37,7 @@ object MyRepository {
     }
 
     fun getStarItems(context: Context): List<FileData> {
-        val favor = MyService.getFavor(AccountRepository.user?.username?:"")
+        val favor = MyService.getFavor(AccountRepository.user?.username?:"", AccountRepository.token!!)
         val resList = ArrayList<FileData>()
         thread {
             try {
@@ -99,17 +99,36 @@ object MyRepository {
     fun staredItemAdd(context: Context, starFile: FileData) {
         val starDB = AppDatabase.getStarDatabase(context).starDao()
         val starFileEntity = FileData_to_StarEntity(starFile)
-        val starAdd = MyService.addFavor(AccountRepository.user?.username?:"", starFile.url)
+        val starAdd = MyService.addFavor(AccountRepository.user?.username?:"", starFile.url, AccountRepository.token!!)
 
         starAdd.enqueue(object : Callback<AddFavorJson> {
             override fun onResponse(call: Call<AddFavorJson>?, response: Response<AddFavorJson>?) {
                 val body = response?.body()
-                if (body != null && body.status == "success"){
-                    thread {
-                        starDB.insertAllStars(starFileEntity)
+                if (body != null){
+                    when (body.status) {
+                        "success" -> {
+                            thread {
+                                starDB.insertAllStars(starFileEntity)
+                            }
+                            Toast.makeText(context, "添加收藏成功", Toast.LENGTH_SHORT).show()
+                            starListFlush.value = true
+                        }
+                        "ExistWrong" -> {
+                            Toast.makeText(context, "文件不存在", Toast.LENGTH_SHORT).show()
+                        }
+                        "FileWrong" -> {
+                            Toast.makeText(context, "该文件属于文件夹不能收藏", Toast.LENGTH_SHORT).show()
+                        }
+                        "UserWrong" -> {
+                            Toast.makeText(context, "文件不属于该用户", Toast.LENGTH_SHORT).show()
+                        }
+                        "RepeatWrong" -> {
+                            Toast.makeText(context, "文件已被收藏", Toast.LENGTH_SHORT).show()
+                        }
+                        "TokenWrong" -> {
+                            Toast.makeText(context, "登录时间过长, Token已失效, 请重新登录", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                    Toast.makeText(context, "添加收藏成功", Toast.LENGTH_SHORT).show()
-                    starListFlush.value = true
                 }
                 else {
                     Toast.makeText(context, "添加收藏失败", Toast.LENGTH_SHORT).show()
@@ -125,7 +144,7 @@ object MyRepository {
     fun staredItemDelete(context: Context, starFile: FileData) {
         val starDB = AppDatabase.getStarDatabase(context).starDao()
         val starFileEntity = FileData_to_StarEntity(starFile)
-        val starDelete = MyService.removeFavor(AccountRepository.user?.username?:"", starFile.url)
+        val starDelete = MyService.removeFavor(AccountRepository.user?.username?:"", starFile.url, AccountRepository.token!!)
 
         starDelete.enqueue(object : Callback<RemoveFavorJson> {
             override fun onResponse(
@@ -133,12 +152,28 @@ object MyRepository {
                 response: Response<RemoveFavorJson>?
             ) {
                 val body = response?.body()
-                if (body != null && body.status == "success"){
-                    thread {
-                        starDB.deleteStar(starFileEntity)
+                if (body != null){
+                    when (body.status) {
+                        "success" -> {
+                            thread {
+                                starDB.deleteStar(starFileEntity)
+                            }
+                            Toast.makeText(context, "删除收藏成功", Toast.LENGTH_SHORT).show()
+                            starListFlush.value = true
+                        }
+                        "ExistWrong" -> {
+                            Toast.makeText(context, "文件不存在", Toast.LENGTH_SHORT).show()
+                        }
+                        "UserWrong" -> {
+                            Toast.makeText(context, "文件不属于该用户", Toast.LENGTH_SHORT).show()
+                        }
+                        "FileWrong" -> {
+                            Toast.makeText(context, "文件未被收藏", Toast.LENGTH_SHORT).show()
+                        }
+                        "TokenWrong" -> {
+                            Toast.makeText(context, "登录时间过长, Token已失效, 请重新登录", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                    Toast.makeText(context, "删除收藏成功", Toast.LENGTH_SHORT).show()
-                    starListFlush.value = true
                 }
                 else {
                     Toast.makeText(context, "删除收藏失败", Toast.LENGTH_SHORT).show()

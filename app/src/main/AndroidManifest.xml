@@ -6,8 +6,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
         tools:ignore="ProtectedPermissions" />
@@ -20,8 +18,10 @@
         android:roundIcon="@mipmap/ic_launcher_panwest_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:requestLegacyExternalStorage="true"
         tools:targetApi="n">
-        <activity android:name=".Main_Function.Setting_Function.PasswordChangeActivity"></activity>
+        <activity android:name=".Login_Function.FindPasswordActivity"></activity>
+        <activity android:name=".Main_Function.Setting_Function.PasswordChangeActivity" />
         <activity android:name=".BaseActivity" />
         <activity android:name=".Main_Function.Setting_Function.ReplySettingActivity" />
         <activity android:name=".Main_Function.Setting_Function.AccountSettingActivity" />

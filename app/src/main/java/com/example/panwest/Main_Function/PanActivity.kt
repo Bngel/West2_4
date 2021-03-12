@@ -12,7 +12,6 @@ import android.widget.EditText
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AlertDialog.Builder
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,9 +27,11 @@ import kotlinx.android.synthetic.main.activity_pan.*
 import kotlinx.android.synthetic.main.item_file.*
 import kotlinx.android.synthetic.main.view_meform_main.*
 import kotlinx.android.synthetic.main.view_search_space.*
+import okhttp3.Headers
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Header
 import java.io.File
 
 class PanActivity : BaseActivity() {
@@ -316,7 +317,6 @@ class PanActivity : BaseActivity() {
     private fun loadFileInformation(url: String){
         val user = getLoginState()
         val userStatus = user.first
-        //val userAccount = user.second
         if (userStatus) {
             val addList = PanRepository.loadFileInformation(
                 AccountRepository.user?.username ?: "",
@@ -324,10 +324,13 @@ class PanActivity : BaseActivity() {
             )
             if (addList != null) {
                 panItems.clear()
+                Log.d("TEXT_TTT", "文件路径:${url},获取文件数量:${addList.size}")
                 panItems.addAll(addList)
             }
-            else
+            else{
+                Log.d("TEXT_TTT", "获取文件为空")
                 panItems.clear()
+            }
         }
     }
 

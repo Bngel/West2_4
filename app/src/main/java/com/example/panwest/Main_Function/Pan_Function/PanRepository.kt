@@ -59,12 +59,13 @@ object PanRepository {
     }
 
     fun loadFileInformation(username: String, parentFile: String): List<FileData>? {
-        val fileInfo = panService.getFileInformation(username, parentFile)
+        val fileInfo = panService.getFileInformation(username, parentFile, AccountRepository.token!!)
         var res: List<FileData>? = null
         thread {
             try {
                 val body = fileInfo.execute().body()
-                res = body.file_data_list
+                if (body.getFileInformationStatus == "success")
+                    res = body.file_data_list
             } catch (e: Exception) {
             }
         }.join(2000)
@@ -82,42 +83,71 @@ object PanRepository {
             ) {
                 val body = response?.body()
                 if (body != null) {
-                    if (body.status == "success") {
-                        Toast.makeText(context, "上传成功, 用时${body.costTime}s", Toast.LENGTH_SHORT)
-                            .show()
-                        flushCheck.value = true
-                    } else {
-                        Toast.makeText(context, "上传失败", Toast.LENGTH_SHORT).show()
+                    when (body.status) {
+                        "success" -> {
+                            Toast.makeText(context, "上传成功, 用时${body.costTime}ms", Toast.LENGTH_SHORT).show()
+                            flushCheck.value = true
+                        }
+                        "EmptyWrong" -> {
+                            Toast.makeText(context, "文件为空", Toast.LENGTH_SHORT).show()
+                        }
+                        "FullOrUserFWrong" -> {
+                            Toast.makeText(context, "用户云盘空间已满或用户不存在", Toast.LENGTH_SHORT).show()
+                        }
+                        "FileNameWrong" -> {
+                            Toast.makeText(context, "文件名为空", Toast.LENGTH_SHORT).show()
+                        }
+                        "FileTypeWrong" -> {
+                            Toast.makeText(context, "文件类型不支持", Toast.LENGTH_SHORT).show()
+                        }
+                        "InternetWrong" -> {
+                            Toast.makeText(context, "网络错误", Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {
+                            Toast.makeText(context, "上传异常", Toast.LENGTH_SHORT).show()
+                            // Toast.makeText(context, body.status, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
 
             override fun onFailure(call: Call<UploadFileJson>?, t: Throwable?) {
-                Toast.makeText(context, "上传失败", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context, "上传异常", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show()
             }
 
         })
     }
 
     fun deleteFile(context: Context, username: String, url: String){
-        val delete = panService.deleteFile(username, url)
+        val delete = panService.deleteFile(username, url, AccountRepository.token!!)
         delete.enqueue(object : Callback<DeleteFileJson> {
             override fun onResponse(
                 call: Call<DeleteFileJson>?,
                 response: Response<DeleteFileJson>?
             ) {
                 val body = response?.body()
-                Log.d("TEXT_TTTTT", body?.status.toString())
                 if (body != null) {
-                    if (body.status == "success") {
-                        Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show()
-                        AccountRepository.accountLogin(
-                            AccountRepository.user?.username ?: "",
-                            AccountRepository.user?.password ?: ""
-                        )
-                        flushCheck.value = true
-                    } else {
-                        Toast.makeText(context, "删除失败", Toast.LENGTH_SHORT).show()
+                    when (body.status) {
+                        "success" -> {
+                            Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show()
+                            flushCheck.value = true
+                        }
+                        "UrlWrong" -> {
+                            Toast.makeText(context, "url不匹配", Toast.LENGTH_SHORT).show()
+                        }
+                        "DeleteWrong" -> {
+                            Toast.makeText(context, "服务器删除文件内部错误", Toast.LENGTH_SHORT).show()
+                        }
+                        "FileWrong" -> {
+                            Toast.makeText(context, "文件不存在", Toast.LENGTH_SHORT).show()
+                        }
+                        "TokenWrong" -> {
+                            Toast.makeText(context, "登录时间过长, Token已失效, 请重新登录", Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {
+                            Toast.makeText(context, "删除失败", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
@@ -130,7 +160,7 @@ object PanRepository {
     }
 
     fun deletePackage(context: Context, username: String, url: String){
-        val delete = panService.deletePackage(username, url)
+        val delete = panService.deletePackage(username, url, AccountRepository.token!!)
         delete.enqueue(object : Callback<DeletePackageJson> {
             override fun onResponse(
                 call: Call<DeletePackageJson>?,
@@ -139,11 +169,17 @@ object PanRepository {
                 val body = response?.body()
                 Log.d("TEXT_TTTTT", body?.status.toString())
                 if (body != null) {
-                    if (body.status == "success") {
-                        Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show()
-                        flushCheck.value = true
-                    } else {
-                        Toast.makeText(context, "删除失败", Toast.LENGTH_SHORT).show()
+                    when (body.status) {
+                        "success" -> {
+                            Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show()
+                            flushCheck.value = true
+                        }
+                        "TokenWrong" -> {
+                            Toast.makeText(context, "登录时间过长, Token已失效, 请重新登录", Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {
+                            Toast.makeText(context, "删除失败", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
@@ -156,7 +192,7 @@ object PanRepository {
     }
 
     fun createPackage(context: Context, username: String, package_name: String, parentFile: String){
-        val delete = panService.createPackage(username, package_name, parentFile)
+        val delete = panService.createPackage(username, package_name, parentFile, AccountRepository.token!!)
         delete.enqueue(object : Callback<CreatePackageJson> {
             override fun onResponse(
                 call: Call<CreatePackageJson>?,
@@ -164,11 +200,17 @@ object PanRepository {
             ) {
                 val body = response?.body()
                 if (body != null) {
-                    if (body.status == "success") {
-                        Toast.makeText(context, "创建成功", Toast.LENGTH_SHORT).show()
-                        flushCheck.value = true
-                    } else {
-                        Toast.makeText(context, "创建失败", Toast.LENGTH_SHORT).show()
+                    when(body.status) {
+                         "success" -> {
+                            Toast.makeText(context, "创建成功", Toast.LENGTH_SHORT).show()
+                            flushCheck.value = true
+                         }
+                        "TokenWrong" -> {
+                            Toast.makeText(context, "登录时间过长, Token已失效, 请重新登录", Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {
+                            Toast.makeText(context, "创建失败", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
@@ -181,13 +223,16 @@ object PanRepository {
     }
 
     fun downloadFile(context: Context, username: String, url: String, filename: String) {
-        val download = panService.downloadFile(username, url)
+        val download = panService.downloadFile(username, url, AccountRepository.token!!)
         download.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
                 val body = response?.body()
                 if (body != null) {
                     writeResponseBodyToDisk(body, "$DOWNLOAD_PATH/$filename")
                     Toast.makeText(context, "下载成功", Toast.LENGTH_SHORT).show()
+                }
+                else {
+                    Toast.makeText(context, "下载失败", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -198,6 +243,50 @@ object PanRepository {
         })
     }
 
+    fun changeFilename(context: Context, username: String, newFilename: String, url: String) {
+        val change = panService.changeFilename(username, newFilename, url, AccountRepository.token!!)
+        change.enqueue(object : Callback<ChangeFileNameJson> {
+            override fun onResponse(
+                call: Call<ChangeFileNameJson>?,
+                response: Response<ChangeFileNameJson>?
+            ) {
+                val body = response?.body()
+                if (body != null) {
+                    when (body.status) {
+                        "success" -> {
+                            Toast.makeText(context, "修改成功", Toast.LENGTH_SHORT).show()
+                            flushCheck.value = true
+                        }
+                        "UrlWrong" -> {
+                            Toast.makeText(context, "文件路径错误", Toast.LENGTH_SHORT).show()
+                        }
+                        "UserWrong" -> {
+                            Toast.makeText(context, "文件不属于该用户", Toast.LENGTH_SHORT).show()
+                        }
+                        "RepeatWrong" -> {
+                            Toast.makeText(context, "文件名重复", Toast.LENGTH_SHORT).show()
+                        }
+                        "TokenWrong" -> {
+                            Toast.makeText(context, "登录时间过长, Token已失效, 请重新登录", Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {
+                            Toast.makeText(context, "修改失败", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                else {
+                    Toast.makeText(context, "修改失败", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ChangeFileNameJson>?, t: Throwable?) {
+                Toast.makeText(context, "修改失败", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+
+
     fun writeResponseBodyToDisk(body: ResponseBody, filepath: String): Boolean {
         return try {
             val futureStudioIconFile =
@@ -205,7 +294,7 @@ object PanRepository {
             var inputStream: InputStream? = null
             var outputStream: OutputStream? = null
             try {
-                val fileReader = ByteArray(4096)
+                val fileReader = ByteArray(4096000)
                 val fileSize = body.contentLength()
                 var fileSizeDownloaded: Long = 0
                 inputStream = body.byteStream()
@@ -217,7 +306,7 @@ object PanRepository {
                     }
                     outputStream.write(fileReader, 0, read)
                     fileSizeDownloaded += read.toLong()
-                    Log.d("DOWNLOAD", "file download: $fileSizeDownloaded of $fileSize")
+                    //Log.d("DOWNLOAD", "file download: $fileSizeDownloaded of $fileSize")
                 }
                 outputStream.flush()
                 true
