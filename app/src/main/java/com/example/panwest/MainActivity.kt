@@ -68,9 +68,27 @@ class MainActivity : BaseActivity() {
         PanRepository.DOWNLOAD_PATH = applicationContext.filesDir.absolutePath + "/PanWestDownload"
         AccountRepository.PORTRAIT_PATH = applicationContext.filesDir.absolutePath + "/PortraitPic"
         makeDir(PanRepository.DOWNLOAD_PATH!!)
+        makeDir(PanRepository.DOWNLOAD_PATH!!)
+        clearPortraits()
+
+
         if (intent.getBooleanExtra("switch_success", false))
             ActivityCollector.onlyActivity(this)
         defaultLogin()
+    }
+
+    private fun clearPortraits() {
+        if (AccountRepository.PORTRAIT_PATH != null) {
+            val port = File(AccountRepository.PORTRAIT_PATH)
+            val ports = port.listFiles()
+            if (ports != null && ports.isNotEmpty()) {
+                for (file in ports) {
+                    if (file.isFile && file.exists()) {
+                        file.delete()
+                    }
+                }
+            }
+        }
     }
 
     private fun makeDir(dir: String){
@@ -100,7 +118,8 @@ class MainActivity : BaseActivity() {
         if (userState) {
             val userName = userAccount.first!!
             val userPassword = userAccount.second!!
-
+            Log.d("PORTRAIT_TEXT", "登录时加载头像")
+            //AccountRepository.accountGetPhoto(this, userName, me_portraitImage)
             if (userPassword != "" && userName != "") {
                 val loginStatus = AccountRepository.accountLogin(userName, userPassword)
                 if (AccountRepository.user != null && AccountRepository.status != null && AccountRepository.status!!) {
@@ -131,7 +150,9 @@ class MainActivity : BaseActivity() {
         try {
             me_userName.text = user.username
             me_userSpace.text = "%.2fMB/1024MB".format(1024.0 - user.space)
+            clearPortraits()
             AccountRepository.accountGetPhoto(this, user.username, me_portraitImage)
+            Log.d("PORTRAIT_TEXT", "默认加载头像")
         } catch (e: Exception){
             e.printStackTrace()
         }
@@ -139,6 +160,7 @@ class MainActivity : BaseActivity() {
 
     private fun setClickEvent() {
         me_portraitImage.setOnClickListener {
+            Log.d("PORTRAIT_TEXT", "更换头像 按下")
             gallery()
         }
         main_moreBtn.setOnClickListener {
@@ -180,6 +202,7 @@ class MainActivity : BaseActivity() {
                 defaultLogin()
             }
             REQUEST_CODE_GALLERY -> if (resultCode == RESULT_OK) {
+                Log.d("PORTRAIT_TEXT", "获取头像返回")
                 val uri: Uri = data!!.data!! // 获取图片的uri
                 val intent_gallery_crop = Intent("com.android.camera.action.CROP")
                 intent_gallery_crop.setDataAndType(uri, "image/*")
@@ -195,6 +218,7 @@ class MainActivity : BaseActivity() {
                 intent_gallery_crop.putExtra("return-data", false)
                 // 创建文件保存裁剪的图片
                 createImageFile()
+                Log.d("PORTRAIT_TEXT", "裁剪头像")
                 imageUri = Uri.fromFile(imageFile)
                 if (imageUri != null) {
                     intent_gallery_crop.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
@@ -230,7 +254,7 @@ class MainActivity : BaseActivity() {
                                 putString("PSWD", userPassword)
                                 apply()
                             }
-                            defaultLoad(AccountRepository.user!!)
+                            //defaultLoad(AccountRepository.user!!)
                         }
                     }
                 } catch (e: Exception) {
@@ -253,7 +277,7 @@ class MainActivity : BaseActivity() {
                                 putString("PSWD", userPassword)
                                 apply()
                             }
-                            defaultLoad(AccountRepository.user!!)
+                            //defaultLoad(AccountRepository.user!!)
                         }
                     }
                 } catch (e: Exception) {
@@ -324,10 +348,11 @@ class MainActivity : BaseActivity() {
                 imageFile!!.delete()
             }
             // 新建文件
-
+            val PORTRAIT = "portrait.png"
+            val filepath = "${AccountRepository.PORTRAIT_PATH}/${AccountRepository.user?.username}${PORTRAIT}"
             imageFile = File(
                 getExternalFilesDir(null),
-                System.currentTimeMillis().toString() + "galleryDemo.jpg"
+                System.currentTimeMillis().toString() + PORTRAIT
             )
         } catch (e: Exception) {
             e.printStackTrace()
@@ -339,36 +364,35 @@ class MainActivity : BaseActivity() {
      * @param imageUri 图片的uri
      */
     private fun displayImage(imageUri: Uri) {
-        try {
-            val file = File(imageUri.path)
-            val requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-            val part = MultipartBody.Part.createFormData("file", file.name, requestFile);
-            val result = AccountRepository.accountPhoto(this, part, me_userName.text.toString())
-            if (result != null && result.status == "success"){
+        Log.d("PORTRAIT_TEXT", "显示头像")
+        val file = File(imageUri.path)
+        val requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file)
+        val part = MultipartBody.Part.createFormData("file", file.name, requestFile)
+        val result = AccountRepository.accountPhoto(this, part, AccountRepository.user?.username?:"")
+        if (result != null && result.status == "success"){
+            Log.d("PORTRAIT_TEXT", "加载头像成功")
+            Glide.with(this)
+                .load(imageUri)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .placeholder(R.drawable.me_loading) // 占位图设置：加载过程中显示的图片
+                .error(R.drawable.me_error) // 异常占位图
+                .centerCrop()
+                .into(me_portraitImage)
+        }
+        else {
+            Log.d("PORTRAIT_TEXT", "加载头像失败")
+            val PORTRAIT = "portrait.png"
+            val filepath = "${AccountRepository.PORTRAIT_PATH}/${AccountRepository.user?.username}${PORTRAIT}"
+            val portraitImg = File(filepath)
+            if (portraitImg.exists()) {
                 Glide.with(this)
-                    .load(imageUri)
+                    .load(filepath)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .placeholder(R.drawable.me_loading) // 占位图设置：加载过程中显示的图片
                     .error(R.drawable.me_error) // 异常占位图
                     .centerCrop()
                     .into(me_portraitImage)
             }
-            else {
-                val PORTRAIT = "portrait.png"
-                val filepath = "${AccountRepository.PORTRAIT_PATH}/${AccountRepository.user?.username}${PORTRAIT}"
-                val portraitImg = File(filepath)
-                if (portraitImg.exists()) {
-                    Glide.with(this)
-                        .load(filepath)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .placeholder(R.drawable.me_loading) // 占位图设置：加载过程中显示的图片
-                        .error(R.drawable.me_error) // 异常占位图
-                        .centerCrop()
-                        .into(me_portraitImage)
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 }

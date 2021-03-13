@@ -247,7 +247,14 @@ object PanRepository {
             override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
                 val body = response?.body()
                 if (body != null) {
-                    writeResponseBodyToDisk(body, "$DOWNLOAD_PATH/$filename")
+                    var fe = filename
+                    var i = 1
+                    val hp = filename.split('.')
+                    while (File("$DOWNLOAD_PATH/$fe").exists()) {
+                        fe = "${hp[0]}(${i}).${hp[1]}"
+                        i += 1
+                    }
+                    writeResponseBodyToDisk(body,  "$DOWNLOAD_PATH/$fe")
                     Toast.makeText(context, "下载成功", Toast.LENGTH_SHORT).show()
                 }
                 else {

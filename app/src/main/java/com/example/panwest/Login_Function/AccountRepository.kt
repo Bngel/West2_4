@@ -82,8 +82,8 @@ object AccountRepository {
 
     fun accountGetPhoto(context: Context, username: String, portrait_pic: ImageView) {
         val PORTRAIT = "portrait.png"
-        val filepath = "${PORTRAIT_PATH}/${user?.username}${PORTRAIT}"
-        //val filepath = System.currentTimeMillis().toString() + "galleryDemo.jpg"
+
+        val filepath = "${PORTRAIT_PATH}/${System.currentTimeMillis()}${username}${PORTRAIT}"
         val photo = accountService.getUserPhoto(username)
         photo.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
