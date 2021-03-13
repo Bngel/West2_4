@@ -125,6 +125,9 @@ class MainActivity : BaseActivity() {
             if (user != null) {
                 me_userName.text = user.username
                 me_userSpace.text = "%.2fMB/1024MB".format(1024.0 - user.space)
+                /*val PORTRAIT = "portrait.png"
+                val filepath = "${AccountRepository.PORTRAIT_PATH}/${AccountRepository.user?.username}${PORTRAIT}"
+                val portraitImg = File(filepath)*/
                 AccountRepository.accountGetPhoto(this, user.username, me_portraitImage)
             }
         } catch (e: Exception){

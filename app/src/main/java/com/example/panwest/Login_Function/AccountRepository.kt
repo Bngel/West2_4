@@ -79,7 +79,7 @@ object AccountRepository {
         val PORTRAIT = "portrait.png"
         val filepath = "${PORTRAIT_PATH}/${user?.username}${PORTRAIT}"
         //val filepath = System.currentTimeMillis().toString() + "galleryDemo.jpg"
-        val photo = accountService.getUserPhoto(username, token!!)
+        val photo = accountService.getUserPhoto(username)
         photo.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
                 val body = response?.body()

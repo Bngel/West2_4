@@ -36,8 +36,7 @@ interface WebService {
 
     @POST("getPhoto")
     fun getUserPhoto(
-        @Query("username") username: String,
-        @Header("token") token: String):
+        @Query("username") username: String):
             Call<ResponseBody>
 
     @POST("getFileInformation")
