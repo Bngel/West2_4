@@ -15,10 +15,13 @@ import com.example.panwest.Data.FileData
 import com.example.panwest.Data.getTypeFormat
 import com.example.panwest.Database.Database.AppDatabase
 import com.example.panwest.Login_Function.AccountRepository
+import com.example.panwest.Main_Function.Pan_Function.PanRepository
 import com.example.panwest.R
+import kotlinx.android.synthetic.main.activity_download.*
 import kotlinx.android.synthetic.main.activity_star.*
 import kotlinx.android.synthetic.main.item_file.*
 import kotlinx.android.synthetic.main.view_search_space.*
+import java.io.File
 import kotlin.concurrent.thread
 
 class StarActivity : BaseActivity() {
@@ -44,6 +47,14 @@ class StarActivity : BaseActivity() {
             if (flush) {
                 initData()
                 MyRepository.starListFlush.value = false
+            }
+        })
+        MyRepository.starCount.observe(this, Observer { newCount ->
+            star_edit_count.text = newCount.toString()
+            if (newCount == adapter?.itemCount && newCount != 0) {
+                star_edit_all.text = "取消全选"
+            } else {
+                star_edit_all.text = "全选"
             }
         })
     }
@@ -167,6 +178,19 @@ class StarActivity : BaseActivity() {
             star_fileList.adapter = adapter
             editStatus = EDIT_CLOSE
             star_bottom_edit.visibility = View.GONE
+        }
+        star_edit_delete.setOnClickListener {
+            Log.d("TEXT_STAR", MyRepository.staredItem.toString())
+            MyRepository.staredItemDeleteAll(this, MyRepository.staredItem)
+        }
+        star_edit_download.setOnClickListener {
+            for (file in MyRepository.staredItem)
+                if (file.type != "wjj")
+                    PanRepository.downloadFile(this,
+                        AccountRepository.user?.username?:"",
+                        file.url,
+                        file.filename)
+            MyRepository.starListFlush.value = true
         }
     }
 

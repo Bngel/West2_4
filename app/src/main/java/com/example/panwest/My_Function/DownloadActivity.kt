@@ -18,6 +18,7 @@ import com.example.panwest.Login_Function.AccountRepository
 import com.example.panwest.Main_Function.Pan_Function.PanRepository
 import com.example.panwest.R
 import kotlinx.android.synthetic.main.activity_download.*
+import kotlinx.android.synthetic.main.activity_pan.*
 import kotlinx.android.synthetic.main.item_file.*
 import kotlinx.android.synthetic.main.view_search_space.*
 
@@ -44,6 +45,14 @@ class DownloadActivity : BaseActivity() {
             if (flush) {
                 initData()
                 MyRepository.downloadListFlush.value = false
+            }
+        })
+        MyRepository.downloadCount.observe(this, Observer { newCount ->
+            download_edit_count.text = newCount.toString()
+            if (newCount == adapter?.itemCount && newCount != 0) {
+                download_edit_all.text = "取消全选"
+            } else {
+                download_edit_all.text = "全选"
             }
         })
     }
@@ -173,13 +182,13 @@ class DownloadActivity : BaseActivity() {
                 if (file.type != "wjj") {
                     val tf = File(file.url)
                     if (tf.delete()) {
-                        MyRepository.downloadListFlush.value = true
                         Toast.makeText(this, "删除成功", Toast.LENGTH_SHORT).show()
                     }
                     else {
                         Toast.makeText(this, "删除失败", Toast.LENGTH_SHORT).show()
                     }
                 }
+            MyRepository.downloadListFlush.value = true
         }
     }
 

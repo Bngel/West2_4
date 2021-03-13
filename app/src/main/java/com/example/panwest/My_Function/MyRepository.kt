@@ -62,11 +62,11 @@ object MyRepository {
                         resList.add(StarEntity_to_FileData(star))
                     Log.d("TEXT_TTT","加载默认收藏")
                 }
-                starListFlush.value = true
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }.join(2000)
+        starListFlush.value = true
         return resList
     }
 
@@ -200,14 +200,8 @@ object MyRepository {
     }
 
     fun staredItemDeleteAll(context: Context, starFiles: List<FileData>) {
-        val starDB = AppDatabase.getStarDatabase(context).starDao()
-        val starFileEntities = ArrayList<StarEntity>()
-        for (starFile in starFiles){
-            starFileEntities.add(FileData_to_StarEntity(starFile))
-        }
-        thread {
-            for (starFileEntity in starFileEntities)
-                starDB.deleteStar(starFileEntity)
+        for (starFile in starFiles) {
+            staredItemDelete(context, starFile)
         }
         starListFlush.value = true
     }

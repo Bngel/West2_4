@@ -232,6 +232,7 @@ class PanActivity : BaseActivity() {
                         AccountRepository.user?.username?:"",
                         file.url,
                         file.filename)
+            PanRepository.flushCheck.value = true
         }
         space_edit_delete.setOnClickListener {
             for (file in PanRepository.selectedItem)
@@ -239,6 +240,7 @@ class PanActivity : BaseActivity() {
                     PanRepository.deleteFile(this,
                         AccountRepository.user?.username?:"",
                         file.url)
+            PanRepository.flushCheck.value = true
         }
     }
 
