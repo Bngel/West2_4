@@ -7,7 +7,7 @@
 
     <RelativeLayout
         android:layout_width="350dp"
-        android:layout_height="110dp"
+        android:layout_height="130dp"
         android:background="@android:color/transparent">
 
         <cn.carbs.android.avatarimageview.library.AvatarImageView
@@ -29,7 +29,7 @@
             android:layout_toRightOf="@id/me_portraitImage"
             android:layout_margin="10dp"
             android:text="@string/default_username"
-            android:textSize="18sp"
+            android:textSize="15sp"
             android:layout_toEndOf="@id/me_portraitImage" />
 
         <TextView
@@ -46,10 +46,10 @@
             android:id="@+id/me_userSpace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_alignTop="@id/me_userSpaceTag"
-            android:layout_toRightOf="@id/me_userSpaceTag"
-            android:layout_toEndOf="@id/me_userSpaceTag"
+            android:layout_marginTop="5dp"
+            android:layout_alignBottom="@id/me_portraitImage"
+            android:layout_below="@id/me_userSpaceTag"
+            android:layout_alignLeft="@id/me_userSpaceTag"
             android:textSize="13sp"
             android:text="@string/default_userspace"/>
     </RelativeLayout>

@@ -15,6 +15,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.*
 import java.lang.Exception
+import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.util.*
 import kotlin.collections.ArrayList
@@ -58,19 +59,37 @@ object PanRepository {
         }
     }
 
-    fun loadFileInformation(username: String, parentFile: String): List<FileData>? {
-        val fileInfo = panService.getFileInformation(username, parentFile, AccountRepository.token!!)
+    fun loadFileInformation(context: Context, username: String, parentFile: String): Pair<Boolean, List<FileData>?> {
         var res: List<FileData>? = null
-        thread {
-            try {
-                val body = fileInfo.execute().body()
-                if (body.getFileInformationStatus == "success")
-                    res = body.file_data_list
-            } catch (e: Exception) {
-            }
-        }.join(2000)
-        flushCheck.value = true
-        return res
+        var success = true
+        var fileInfo: Call<LoadFilesJson>? = null
+        try {
+            fileInfo = panService.getFileInformation(username, parentFile, AccountRepository.token!!)
+        } catch (e: Exception) {
+            success = false
+        }
+        if (success) {
+            thread {
+                try {
+                    val body = fileInfo?.execute()?.body()
+                    when (body?.getFileInformationStatus) {
+                        "success" -> {
+                            res = body.file_data_list
+                            success = true
+                        }
+                        "ParentFileWrong" -> {
+                            success = false
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    success = false
+                }
+            }.join(2000)
+        }
+        if (success)
+            flushCheck.value = true
+        return Pair<Boolean, List<FileData>?>(success,res)
     }
 
     fun uploadFile(context: Context, file: MultipartBody.Part, username: String, parentFile: String) {

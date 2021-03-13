@@ -100,7 +100,7 @@ class MainActivity : BaseActivity() {
         if (userState) {
             val userName = userAccount.first!!
             val userPassword = userAccount.second!!
-            //AccountRepository.accountGetPhoto(userName)
+
             if (userPassword != "" && userName != "") {
                 val loginStatus = AccountRepository.accountLogin(userName, userPassword)
                 if (AccountRepository.user != null && AccountRepository.status != null && AccountRepository.status!!) {
@@ -110,6 +110,13 @@ class MainActivity : BaseActivity() {
                     /*val loginIntent = Intent(this, LoginActivity::class.java)
                     startActivityForResult(loginIntent, LOGIN_ACTIVITY)*/
                     Toast.makeText(this, "网络未连接", Toast.LENGTH_SHORT).show()
+                    if (AccountRepository.user != null)
+                        defaultLoad(AccountRepository.user!!)
+                    else {
+                        val PORTRAIT = "portrait.png"
+                        val filepath = "${AccountRepository.PORTRAIT_PATH}/${AccountRepository.user?.username}${PORTRAIT}"
+                        defaultLoad(User(userAccount.first!!,"","", filepath, 0.0))
+                    }
                 }
             }
         }
@@ -122,18 +129,12 @@ class MainActivity : BaseActivity() {
     @SuppressLint("SetTextI18n")
     private fun defaultLoad(user: User) {
         try {
-            if (user != null) {
-                me_userName.text = user.username
-                me_userSpace.text = "%.2fMB/1024MB".format(1024.0 - user.space)
-                /*val PORTRAIT = "portrait.png"
-                val filepath = "${AccountRepository.PORTRAIT_PATH}/${AccountRepository.user?.username}${PORTRAIT}"
-                val portraitImg = File(filepath)*/
-                AccountRepository.accountGetPhoto(this, user.username, me_portraitImage)
-            }
+            me_userName.text = user.username
+            me_userSpace.text = "%.2fMB/1024MB".format(1024.0 - user.space)
+            AccountRepository.accountGetPhoto(this, user.username, me_portraitImage)
         } catch (e: Exception){
             e.printStackTrace()
         }
-
     }
 
     private fun setClickEvent() {
@@ -215,14 +216,46 @@ class MainActivity : BaseActivity() {
             }
             SPACE_ACTIVITY -> {
                 try {
-                    defaultLoad(AccountRepository.user!!)
+                    val user = getLoginState()
+                    if (user.first) {
+                        val userAccount = user.second.first!!
+                        val userPassword = user.second.second!!
+                        AccountRepository.accountLogin(userAccount, userPassword)
+                        // Log.d("TEXT_TTT", AccountRepository.user.toString() + "\n" + AccountRepository.status.toString())
+                        if (AccountRepository.user != null && AccountRepository.status != null && AccountRepository.status!!) {
+                            val userInfo = getSharedPreferences(LOGIN_STATE, Context.MODE_PRIVATE).edit()
+                            userInfo.apply {
+                                putBoolean("STATE", true)
+                                putString("ID", userAccount)
+                                putString("PSWD", userPassword)
+                                apply()
+                            }
+                            defaultLoad(AccountRepository.user!!)
+                        }
+                    }
                 } catch (e: Exception) {
 
                 }
             }
             SETTING_ACTIVITY -> {
                 try {
-                    defaultLoad(AccountRepository.user!!)
+                    val user = getLoginState()
+                    if (user.first) {
+                        val userAccount = user.second.first!!
+                        val userPassword = user.second.second!!
+                        AccountRepository.accountLogin(userAccount, userPassword)
+                        // Log.d("TEXT_TTT", AccountRepository.user.toString() + "\n" + AccountRepository.status.toString())
+                        if (AccountRepository.user != null && AccountRepository.status != null && AccountRepository.status!!) {
+                            val userInfo = getSharedPreferences(LOGIN_STATE, Context.MODE_PRIVATE).edit()
+                            userInfo.apply {
+                                putBoolean("STATE", true)
+                                putString("ID", userAccount)
+                                putString("PSWD", userPassword)
+                                apply()
+                            }
+                            defaultLoad(AccountRepository.user!!)
+                        }
+                    }
                 } catch (e: Exception) {
 
                 }
@@ -276,6 +309,7 @@ class MainActivity : BaseActivity() {
                 // 用户同意，执行相应操作
                 Log.e("TAG", "用户已经同意了存储权限")
             } else {
+                ActivityCollector.finishAll()
                 // 用户不同意，向用户展示该权限作用
             }
         }
@@ -290,6 +324,7 @@ class MainActivity : BaseActivity() {
                 imageFile!!.delete()
             }
             // 新建文件
+
             imageFile = File(
                 getExternalFilesDir(null),
                 System.currentTimeMillis().toString() + "galleryDemo.jpg"
@@ -308,15 +343,30 @@ class MainActivity : BaseActivity() {
             val file = File(imageUri.path)
             val requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
             val part = MultipartBody.Part.createFormData("file", file.name, requestFile);
-            val result = AccountRepository.accountPhoto(part, me_userName.text.toString())
-            Log.d("TEXT_TTT", result!!.status)
-            Glide.with(this)
-                .load(imageUri)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .placeholder(R.drawable.me_loading) // 占位图设置：加载过程中显示的图片
-                .error(R.drawable.me_error) // 异常占位图
-                .centerCrop()
-                .into(me_portraitImage)
+            val result = AccountRepository.accountPhoto(this, part, me_userName.text.toString())
+            if (result != null && result.status == "success"){
+                Glide.with(this)
+                    .load(imageUri)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.me_loading) // 占位图设置：加载过程中显示的图片
+                    .error(R.drawable.me_error) // 异常占位图
+                    .centerCrop()
+                    .into(me_portraitImage)
+            }
+            else {
+                val PORTRAIT = "portrait.png"
+                val filepath = "${AccountRepository.PORTRAIT_PATH}/${AccountRepository.user?.username}${PORTRAIT}"
+                val portraitImg = File(filepath)
+                if (portraitImg.exists()) {
+                    Glide.with(this)
+                        .load(filepath)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .placeholder(R.drawable.me_loading) // 占位图设置：加载过程中显示的图片
+                        .error(R.drawable.me_error) // 异常占位图
+                        .centerCrop()
+                        .into(me_portraitImage)
+                }
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }

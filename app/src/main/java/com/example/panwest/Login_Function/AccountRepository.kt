@@ -19,6 +19,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
 import java.io.File
+import java.net.ConnectException
 import java.net.SocketTimeoutException
 import kotlin.concurrent.thread
 
@@ -60,8 +61,9 @@ object AccountRepository {
         return res
     }
 
-    fun accountPhoto(photo: MultipartBody.Part, username: String): PhotoJson? {
+    fun accountPhoto(context: Context, photo: MultipartBody.Part, username: String): PhotoJson? {
         var res: PhotoJson? = null
+        var connect = true
         val upload = accountService.userPhoto(photo, username)
         thread {
             try{
@@ -69,9 +71,12 @@ object AccountRepository {
                 Log.d("PHOTO_UPLOAD", body!!.toString())
                 if (body.status == "success")
                     res = body
-            } catch (e: SocketTimeoutException) {
+            } catch (e: ConnectException) {
+                connect = false
             }
         }.join(2000)
+        if (!connect)
+            Toast.makeText(context, "连接服务器失败", Toast.LENGTH_SHORT).show()
         return res
     }
 
@@ -98,6 +103,16 @@ object AccountRepository {
                     }
                     else {
                         Log.d("PHOTO_TEXT","读取失败")
+                        val portrait = File(filepath)
+                        if (portrait.exists()){
+                            Glide.with(context)
+                                .load(filepath)
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .placeholder(R.drawable.me_loading) // 占位图设置：加载过程中显示的图片
+                                .error(R.drawable.me_error) // 异常占位图
+                                .centerCrop()
+                                .into(portrait_pic)
+                        }
                     }
                 }
             }
@@ -106,6 +121,7 @@ object AccountRepository {
                 Toast.makeText(context, "头像更新失败", Toast.LENGTH_SHORT).show()
                 val portrait = File(filepath)
                 if (portrait.exists()){
+                    Log.d("TEXT_TTT", "默认头像")
                     Glide.with(context)
                         .load(filepath)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)

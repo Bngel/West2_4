@@ -17,7 +17,7 @@ class RegisterActivity : BaseActivity() {
     private val PSWD_CHECK = "两次密码输入不一致, 请重新输入"
     private val LOGIN_STATE = "login_state"
     private val REGISTER_ACTIVITY = 1
-    private val REGISTER_FAIL_RESULT = "用户名已存在, 请重新输入"
+    private val REGISTER_FAIL_RESULT = "注册失败"
     private val REGISTER_SUCCESS_RESULT = "注册成功"
     private val REGISTER_ERROREMAIL_RESULT = "邮箱格式有误"
 

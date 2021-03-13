@@ -315,22 +315,26 @@ class PanActivity : BaseActivity() {
     }
 
     private fun loadFileInformation(url: String){
-        val user = getLoginState()
-        val userStatus = user.first
-        if (userStatus) {
-            val addList = PanRepository.loadFileInformation(
-                AccountRepository.user?.username ?: "",
-                url
-            )
-            if (addList != null) {
+        val addList = PanRepository.loadFileInformation(
+            this,
+            AccountRepository.user?.username ?: "",
+            url
+        )
+        if (addList.first) {
+            if (addList.second != null){
                 panItems.clear()
-                Log.d("TEXT_TTT", "文件路径:${url},获取文件数量:${addList.size}")
-                panItems.addAll(addList)
+                Log.d("TEXT_TTT", "文件路径:${url},获取文件数量:${addList.second!!.size}")
+                panItems.addAll(addList.second!!)
             }
             else{
                 Log.d("TEXT_TTT", "获取文件为空")
                 panItems.clear()
             }
+        }
+        else {
+            Toast.makeText(this, "获取文件失败, 请检查网络链接", Toast.LENGTH_SHORT).show()
+            Log.d("TEXT_TTT", "获取文件失败, 请检查网络链接")
+            panItems.clear()
         }
     }
 
